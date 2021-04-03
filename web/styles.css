@@ -1,0 +1,12 @@
+@import "./public/styles/mono.min.css";
+@import "./public/styles/color.min.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.nav a {
+  padding: 0.5rem;
+}

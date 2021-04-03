@@ -1,0 +1,11 @@
+{
+  "python.pythonPath": "venv/bin/python",
+  "python.languageServer": "Pylance",
+  "python.linting.enabled": true,
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "typescript.tsdk": "web/.yarn/sdks/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}
