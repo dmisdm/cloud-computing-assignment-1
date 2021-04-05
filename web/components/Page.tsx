@@ -1,23 +1,21 @@
+import Link from "next/link";
 import React from "react";
 
 export const Page = ({
   showHeader = true,
+  heading,
   ...props
 }: {
+  heading: React.ReactNode;
   showHeader?: boolean;
   children: React.ReactNode;
 }) => {
   return (
-    <div className="container">
+    <div className="container bg-grey">
       <div className="content">
         {showHeader && (
           <header>
-            <h1>Header</h1>
-            <nav className="nav">
-              <a href="#">Home</a>
-              <a href="#">Docs</a>
-              <a href="#">About</a>
-            </nav>
+            <h1>{heading}</h1>
           </header>
         )}
         {props.children}

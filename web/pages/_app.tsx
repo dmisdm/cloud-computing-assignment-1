@@ -1,6 +1,5 @@
-import { defaultTheme, Preflight, ThemeProvider } from "@xstyled/emotion";
+import { useRouter } from "next/router";
 import React from "react";
-
 import "../styles.css";
 
 // This default export is required in a new `pages/_app.js` file.
@@ -14,7 +13,6 @@ export default function MyApp<Props>({
   return (
     <>
       <link rel="stylesheet" href="/styles/light.min.css" />
-
       <Component {...pageProps} />
     </>
   );
