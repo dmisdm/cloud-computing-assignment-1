@@ -2,22 +2,7 @@ import createPersistedState from "use-persisted-state";
 import { parse, isBefore, fromUnixTime } from "date-fns";
 import React from "react";
 import { useRouter } from "next/router";
-import { type, string, number, optional, unknown } from "superstruct";
-
-const userRecord = type({
-  id: string(),
-  user_name: string(),
-  image: string(),
-  authExpireDate: number(),
-});
-
-const errorResponse = type({
-  error: type({
-    detail: optional(unknown()),
-    message: string(),
-    name: string(),
-  }),
-});
+import { errorResponse, userRecord } from "./models";
 
 export type Error = typeof errorResponse.TYPE;
 

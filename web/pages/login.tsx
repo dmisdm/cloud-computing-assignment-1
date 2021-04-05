@@ -3,19 +3,8 @@ import { Page } from "../components/Page";
 import { x } from "@xstyled/emotion";
 import { useUser } from "../components/useUser";
 import { useForm } from "react-hook-form";
-const Field = React.forwardRef(
-  (
-    { label, ...props }: { label: string } & JSX.IntrinsicElements["input"],
-    ref: React.ForwardedRef<HTMLInputElement>
-  ) => (
-    <div>
-      <x.label display="flex" alignItems="center">
-        <x.span flex={1}>{label}</x.span>
-        <input className="mh input border" {...props} ref={ref} />
-      </x.label>
-    </div>
-  )
-);
+import { Field } from "../components/Field";
+import { ErrorMessage } from "../components/ErrorMessage";
 const Login = () => {
   const { user, login, redirectToHome } = useUser(false);
   const { register, handleSubmit, formState } = useForm<{
@@ -59,20 +48,16 @@ const Login = () => {
               {...register("password", { required: true })}
             />
             <x.input
-              w="100%"
+              w="96%"
               paddingTop="1rem"
               type="submit"
-              className="primary"
+              className="primary rounded"
               name="login"
               value="Login"
             />
-            {formError && (
-              <div className="bg-error white p rounded small m">
-                <span className="large">Login Error</span>
-                <br />
-                {formError}
-              </div>
-            )}
+            {formError ? (
+              <x.p className="tacenter small error">{formError}</x.p>
+            ) : null}
           </form>
         </x.div>
       </x.div>

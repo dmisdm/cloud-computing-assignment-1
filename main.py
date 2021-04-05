@@ -10,7 +10,13 @@ from api.errors import (
     Unauthenticated,
 )
 from flask import Flask, jsonify, request, make_response, url_for, redirect, g
-from api.schemas import LoginForm, Post, PostCreateForm, User
+from api.schemas import (
+    LoginForm,
+    Post,
+    PostCreateForm,
+    User,
+    UserRegistrationForm,
+)
 from api.datastore import users_datastore, posts_datastore
 from api.image_storage import image_storage
 from jwt import DecodeError, encode, decode, ExpiredSignatureError
@@ -96,16 +102,23 @@ def login():
 
 @app.route("/api/register", methods=["POST"])
 def register():
-    data = request.json
+    data = request.form
+    image_file = list(request.files.values())[0]
     try:
-        valid_form = User(**data)
+        valid_form = UserRegistrationForm(**data, image=image_file)
     except ValidationError as error:
         raise InvalidRegistrationForm().with_details({"errors": error.errors()})
 
-    new_user_result = users_datastore.add_user(**valid_form.dict())
+    image_url = image_storage.upload_image(image_file)
+    form_without_image = valid_form.dict()
+    del form_without_image["image"]
+    new_user_result = users_datastore.add_user(
+        User(**form_without_image, image=image_url)
+    )
     if new_user_result != True:
         raise new_user_result
     else:
+
         response = make_response()
         response.status_code = 201
         return response
@@ -114,22 +127,48 @@ def register():
 @app.route("/api/posts", methods=["GET"])
 @authenticated_route
 def top_ten_posts():
-    return {"posts": posts_datastore.top_ten()}
+    return {
+        "posts": [
+            {
+                **post,
+                "created_at": post["created_at"].timestamp(),
+                "updated_at": post["updated_at"].timestamp(),
+            }
+            for post in posts_datastore.top_ten()
+        ]
+    }
+
+
+@app.route("/api/my_posts", methods=["GET"])
+@authenticated_route
+def my_posts():
+    return {
+        "posts": [
+            {
+                **post,
+                "created_at": post["created_at"].timestamp(),
+                "updated_at": post["updated_at"].timestamp(),
+            }
+            for post in posts_datastore.user_posts(g.user["id"])
+        ]
+    }
 
 
 @app.route("/api/posts", methods=["POST"])
 @authenticated_route
 def create_post():
+    image_file = list(request.files.values())[0]
     try:
-        valid_post = PostCreateForm(**request.form)
+        valid_post = PostCreateForm(**request.form, image=image_file)
     except ValidationError as error:
         raise InvalidPostCreationForm().with_details({"errors": error.errors()})
-    image_file = list(request.files.values())[0]
 
     image_url = image_storage.upload_image(image_file)
+    form_without_image = valid_post.dict()
+    del form_without_image["image"]
     post = Post(
-        **valid_post.dict(),
-        id=uuid4(),
+        **form_without_image,
+        id=str(uuid4()),
         image=image_url,
         user_id=g.user["id"],
         created_at=datetime.now().timestamp(),

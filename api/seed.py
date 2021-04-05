@@ -34,3 +34,8 @@ for user in users:
         print(f"Created user {user_id}")
     else:
         print(f"Error creating {user_id}: {result.message}")
+
+
+os.system(
+    f"gcloud datastore indexes create {os.path.dirname(__file__)}/index.yaml"
+)

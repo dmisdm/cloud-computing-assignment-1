@@ -5,6 +5,5 @@
     "**/.yarn": true,
     "**/.pnp.*": true
   },
-  "typescript.tsdk": "web/.yarn/sdks/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true
 }

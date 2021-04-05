@@ -25,21 +25,24 @@ class UsersDatastore:
 
         return list(query.fetch(limit=limit, offset=offset))
 
-    def get_user_by_key(self, key: int):
+    def get_user_by_id(self, id: str):
         return self.datastore_client.get(
-            key=self.datastore_client.key("user", key)
+            key=self.datastore_client.key("user", id)
         )
 
-    def validate_user_uniqueness(self, id: int, user_name: str):
+    def validate_user_uniqueness(self, id: str, user_name: str):
+        if self.get_user_by_id(id):
+            return UserIDAlreadyExists()
+
         existing_users = self.get_users(
-            filters=[("id", id), ("user_name", user_name)]
+            filters=[
+                ("user_name", user_name),
+            ]
         )
 
         if len(existing_users) > 0:
-            if len([user for user in existing_users if user.id == id]) > 0:
-                return UserIDAlreadyExists()
-            else:
-                return UserNameAlreadyExists()
+            return UserNameAlreadyExists()
+
         return None
 
     def add_user(self, user: User):
@@ -49,14 +52,14 @@ class UsersDatastore:
         if uniqueness_error:
             return uniqueness_error
 
-        entity = datastore.Entity(key=datastore_client.key("user"))
+        entity = datastore.Entity(key=datastore_client.key("user", user.id))
 
-        entity.update(**user)
+        entity.update(**user.dict())
         self.datastore_client.put(entity)
         return True
 
-    def patch_user(self, id: int, changes: list[(str, str)]):
-        found_user = self.get_user_by_key(id)
+    def patch_user(self, id: str, changes: list[(str, str)]):
+        found_user = self.get_user_by_id(id)
         if found_user:
             for change in changes:
                 found_user[change[0]] = change[1]
@@ -71,7 +74,10 @@ class UsersDatastore:
 
     def validate_credentials(self, id: str, password: str):
         found_users = self.get_users(
-            filters=[("id", id), ("password", password)]
+            filters=[
+                ("__key__", self.datastore_client.key("user", id)),
+                ("password", password),
+            ]
         )
         if len(found_users) == 1:
             return found_users[0]
@@ -84,21 +90,48 @@ class PostsDatastore:
         self.datastore_client = datastore_client
 
     def top_ten(self):
-        query = self.datastore_client.query(kind="post")
-        query.order = ["-created_at"]
-        return list(query.fetch(limit=10))
+        posts_query = self.datastore_client.query(kind="post")
+        posts_query.order = ["-created_at"]
+        posts = list(posts_query.fetch(limit=10))
+
+        users = users_datastore.get_users(
+            filters=[
+                ("__key__", self.datastore_client.key("user", post["user_id"]))
+                for post in posts
+            ]
+        )
+
+        return [
+            {
+                **post,
+                "user_image": next(
+                    (
+                        user["image"]
+                        for user in users
+                        if user["id"] == post["user_id"]
+                    ),
+                ),
+            }
+            for post in posts
+        ]
 
     def create(self, post: Post):
-        post_entity = datastore.Entity(key=datastore_client.key("post"))
+        post_entity = datastore.Entity(
+            key=datastore_client.key("post", post.id)
+        )
         post_entity.update(post)
         self.datastore_client.put(post_entity)
         return True
 
     def user_posts(self, user_id: str):
-        query = self.datastore_client.query(kind="post")
-        query.add_filter("user_id", user_id)
-        query.order = ["-created_at"]
-        return list(query.fetch(limit=10))
+        posts_query = self.datastore_client.query(kind="post")
+        posts_query.order = ["-created_at"]
+        posts_query.add_filter("user_id", "=", user_id)
+        posts = list(posts_query.fetch())
+
+        user = users_datastore.get_user_by_id(user_id)
+
+        return [{**post, "user_image": user["image"]} for post in posts]
 
 
 users_datastore = UsersDatastore(datastore_client=datastore_client)

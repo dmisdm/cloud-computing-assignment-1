@@ -1,26 +1,15 @@
 import React from "react";
-import { array, create, string, type } from "superstruct";
+import { Posts } from "./models";
+import { objectToFormData } from "./objectToFormData";
 import { useUser } from "./useUser";
 
-const Post = type({
-  id: string(),
-  subject: string(),
-  message: string(),
-  image: string(),
-  user_id: string(),
-});
-
-const Posts = type({
-  posts: array(Post),
-});
-
-export function usePosts() {
+export function usePosts(myPosts = false) {
   useUser();
   const [posts, setPosts] = React.useState<typeof Posts.TYPE>({ posts: [] });
   const [loading, setLoading] = React.useState(true);
-  React.useEffect(() => {
+  const fetchPosts = React.useCallback(() => {
     setLoading(true);
-    fetch("/api/posts")
+    fetch(myPosts ? "/api/my_posts" : "/api/posts")
       .then(async (res) => {
         if (!res.ok) {
           return [];
@@ -30,6 +19,33 @@ export function usePosts() {
       .finally(() => {
         setLoading(false);
       });
+  }, [myPosts]);
+  React.useEffect(() => {
+    fetchPosts();
   }, []);
-  return loading ? "loading" : posts;
+
+  const createPost = React.useCallback(
+    async (post: { subject: string; message: string; image: File }) => {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        body: objectToFormData(post),
+      });
+      if (res.ok) {
+        return res.json();
+      } else {
+        return {
+          error: await res.json(),
+        };
+      }
+    },
+    []
+  );
+
+  const editPost = React.useCallback(() => {}, []);
+  return {
+    state: loading ? "loading" : posts,
+    createPost,
+    editPost,
+    fetchPosts,
+  } as const;
 }

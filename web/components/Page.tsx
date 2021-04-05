@@ -11,10 +11,11 @@ export const Page = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="container bg-grey">
+    <div className="container">
       <div className="content">
         {showHeader && (
           <header>
+            <nav></nav>
             <h1>{heading}</h1>
           </header>
         )}
