@@ -7,7 +7,7 @@ handlers:
     static_files: web/out/index.html
     upload: web/out/index.html
 
-  - url: /(register|login|user)
+  - url: /(register|login|user|big-queries)
     static_files: web/out/\1.html
     upload: web/out/(.*)\.html
 
