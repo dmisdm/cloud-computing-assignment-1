@@ -11,6 +11,10 @@ class ApplicationError(Exception):
         self.details = data
         return self
 
+    def with_message(self, message: str):
+        self.message = message
+        return self
+
     def to_flask_response(self):
         response = json.jsonify(
             {
@@ -23,6 +27,11 @@ class ApplicationError(Exception):
         )
         response.status_code = self.status_code
         return response
+
+
+class InvalidRequest(ApplicationError):
+    status_code = 400
+    message = "Invalid request"
 
 
 # Auth errors

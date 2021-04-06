@@ -5,6 +5,8 @@ import { useUser } from "../components/useUser";
 import { useForm } from "react-hook-form";
 import { Field } from "../components/Field";
 import { ErrorMessage } from "../components/ErrorMessage";
+import { Padding } from "../components/Padding";
+import Link from "next/link";
 const Login = () => {
   const { user, login, redirectToHome } = useUser(false);
   const { register, handleSubmit, formState } = useForm<{
@@ -13,7 +15,7 @@ const Login = () => {
   }>();
   const [formError, setFormError] = React.useState<string | null>(null);
   return (
-    <Page heading="" showHeader={false}>
+    <Page showNav={false}>
       <x.div
         display="flex"
         h="100vh"
@@ -59,6 +61,13 @@ const Login = () => {
               <x.p className="tacenter small error">{formError}</x.p>
             ) : null}
           </form>
+          <Padding />
+          <hr />
+          <Link href="/register">
+            <x.button w="100%" className="btn">
+              Register
+            </x.button>
+          </Link>
         </x.div>
       </x.div>
     </Page>

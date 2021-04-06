@@ -2,7 +2,7 @@ black==20.8b1
 Flask==1.1.2
 google-cloud-datastore==2.1.0
 google-cloud-storage==1.37.0
-ipython==7.22.0
+google-cloud-bigquery==2.13.1
 pydantic==1.8.1
 PyJWT==2.0.1
 requests==2.25.1

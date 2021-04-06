@@ -58,16 +58,10 @@ class UsersDatastore:
         self.datastore_client.put(entity)
         return True
 
-    def patch_user(self, id: str, changes: list[(str, str)]):
-        found_user = self.get_user_by_id(id)
+    def update_user(self, user: User):
+        found_user = self.get_user_by_id(user.id)
         if found_user:
-            for change in changes:
-                found_user[change[0]] = change[1]
-            uniqueness_error = self.validate_user_uniqueness(
-                id=found_user.id, user_name=found_user.user_name
-            )
-            if uniqueness_error:
-                return uniqueness_error
+            found_user.update(**user.dict())
             self.datastore_client.put(found_user)
             return True
         return "User not found"
@@ -91,31 +85,23 @@ class PostsDatastore:
 
     def top_ten(self):
         posts_query = self.datastore_client.query(kind="post")
-        posts_query.order = ["-created_at"]
+        posts_query.order = ["-updated_at"]
         posts = list(posts_query.fetch(limit=10))
 
-        users = users_datastore.get_users(
-            filters=[
-                ("__key__", self.datastore_client.key("user", post["user_id"]))
-                for post in posts
-            ]
-        )
+        users = users_datastore.get_users()
 
         return [
             {
                 **post,
-                "user_image": next(
-                    (
-                        user["image"]
-                        for user in users
-                        if user["id"] == post["user_id"]
-                    ),
+                "user": next(
+                    (user for user in users if user["id"] == post["user_id"]),
+                    "",
                 ),
             }
             for post in posts
         ]
 
-    def create(self, post: Post):
+    def upsert(self, post: Post):
         post_entity = datastore.Entity(
             key=datastore_client.key("post", post.id)
         )
@@ -123,15 +109,20 @@ class PostsDatastore:
         self.datastore_client.put(post_entity)
         return True
 
+    def get_post_by_id(self, post_id: str):
+        return self.datastore_client.get(
+            key=self.datastore_client.key("post", post_id)
+        )
+
     def user_posts(self, user_id: str):
         posts_query = self.datastore_client.query(kind="post")
-        posts_query.order = ["-created_at"]
+        posts_query.order = ["-updated_at"]
         posts_query.add_filter("user_id", "=", user_id)
         posts = list(posts_query.fetch())
 
         user = users_datastore.get_user_by_id(user_id)
 
-        return [{**post, "user_image": user["image"]} for post in posts]
+        return [{**post, "user": user} for post in posts]
 
 
 users_datastore = UsersDatastore(datastore_client=datastore_client)

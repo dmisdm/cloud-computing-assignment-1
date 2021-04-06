@@ -22,7 +22,12 @@ export const Post = type({
   image: string(),
   user_id: string(),
   created_at: number(),
-  user_image: string(),
+  updated_at: number(),
+  user: type({
+    image: string(),
+    id: string(),
+    user_name: string(),
+  }),
 });
 
 export const Posts = type({

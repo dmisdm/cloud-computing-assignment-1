@@ -19,7 +19,7 @@ const RegisterPage = () => {
   const [formError, setFormError] = React.useState<string>();
   const router = useRouter();
   return (
-    <Page showHeader={false} heading="">
+    <Page showNav={false}>
       <x.div
         h="100vh"
         display="flex"
@@ -51,22 +51,33 @@ const RegisterPage = () => {
             flexDirection="column"
             className="card rounded bg-grey"
           >
-            <Field label="ID" {...register("id", { required: true })} />
+            <Field
+              label="ID"
+              autoComplete="new-username"
+              required
+              {...register("id", { required: true })}
+            />
             <ErrorMessage formState={formState} field="id" />
             <Field
               label="Name"
+              required
+              autoComplete="name"
               {...register("user_name", { required: true })}
             />
             <ErrorMessage formState={formState} field="user_name" />
             <Field
               type="password"
               label="Password"
+              autoComplete="new-password"
+              required
               {...register("password", { required: true })}
             />
             <ErrorMessage formState={formState} field="password" />
             <Field
               type="password"
               label="Confirm Password"
+              autoComplete="new-password"
+              required
               {...register("confirm_password", {
                 required: true,
                 validate: (value) =>
@@ -80,6 +91,7 @@ const RegisterPage = () => {
               label="Profile Image"
               type="file"
               accept=".jpg,.gif,.png,.jpeg"
+              required
               {...register("image", {
                 required: true,
                 validate: (value) => {
@@ -94,8 +106,13 @@ const RegisterPage = () => {
               type="submit"
               value={formState.isSubmitting ? "Loading..." : "Register"}
               w="100%"
-              className="btn bg-info white"
+              className="btn primary rounded white"
             />
+            {formError && (
+              <x.span py="1rem" className="error tacenter">
+                {formError}
+              </x.span>
+            )}
           </x.div>
         </form>
       </x.div>

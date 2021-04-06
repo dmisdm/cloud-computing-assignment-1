@@ -7,16 +7,20 @@ from api.errors import (
     InvalidLoginForm,
     InvalidPostCreationForm,
     InvalidRegistrationForm,
+    InvalidRequest,
     Unauthenticated,
 )
 from flask import Flask, jsonify, request, make_response, url_for, redirect, g
 from api.schemas import (
+    ChangePasswordForm,
     LoginForm,
     Post,
     PostCreateForm,
+    PostEditForm,
     User,
     UserRegistrationForm,
 )
+from api.bigquery import big_query
 from api.datastore import users_datastore, posts_datastore
 from api.image_storage import image_storage
 from jwt import DecodeError, encode, decode, ExpiredSignatureError
@@ -81,8 +85,11 @@ def login():
     if valid_credentials:
         local_exp = datetime.now() + jwt_exp_duration
         exp = datetime.utcnow() + jwt_exp_duration
+
         payload = {
-            **valid_credentials,
+            "id": valid_credentials["id"],
+            "user_name": valid_credentials["user_name"],
+            "image": valid_credentials["image"],
             "exp": exp,
         }
         token = encode(
@@ -90,7 +97,6 @@ def login():
             jwt_secret,
             algorithm=jwt_algorithms[0],
         )
-        del payload["password"]
         del payload["exp"]
         payload["authExpireDate"] = local_exp.timestamp()
         response = jsonify(payload)
@@ -110,10 +116,8 @@ def register():
         raise InvalidRegistrationForm().with_details({"errors": error.errors()})
 
     image_url = image_storage.upload_image(image_file)
-    form_without_image = valid_form.dict()
-    del form_without_image["image"]
     new_user_result = users_datastore.add_user(
-        User(**form_without_image, image=image_url)
+        User.parse_obj({**valid_form.dict(), "image": image_url})
     )
     if new_user_result != True:
         raise new_user_result
@@ -122,6 +126,25 @@ def register():
         response = make_response()
         response.status_code = 201
         return response
+
+
+@app.route("/api/change_password", methods=["POST"])
+@authenticated_route
+def change_password():
+    data = request.json
+    try:
+        valid_form = ChangePasswordForm(**data)
+    except ValidationError as error:
+        raise InvalidRequest().with_details({"errors": error.errors()})
+
+    user = User(**users_datastore.get_user_by_id(g.user["id"]))
+
+    if user.password != valid_form.old_password:
+        raise InvalidRequest().with_message("The old password is incorrect")
+
+    user.password = valid_form.new_password
+    users_datastore.update_user(user)
+    return make_response()
 
 
 @app.route("/api/posts", methods=["GET"])
@@ -157,27 +180,83 @@ def my_posts():
 @app.route("/api/posts", methods=["POST"])
 @authenticated_route
 def create_post():
-    image_file = list(request.files.values())[0]
+    files = list(request.files.values())
+    image_file = files[0] if len(files) > 0 else None
+
     try:
         valid_post = PostCreateForm(**request.form, image=image_file)
     except ValidationError as error:
         raise InvalidPostCreationForm().with_details({"errors": error.errors()})
 
     image_url = image_storage.upload_image(image_file)
-    form_without_image = valid_post.dict()
-    del form_without_image["image"]
-    post = Post(
-        **form_without_image,
-        id=str(uuid4()),
-        image=image_url,
-        user_id=g.user["id"],
-        created_at=datetime.now().timestamp(),
-        updated_at=datetime.now().timestamp(),
+    post = Post.parse_obj(
+        {
+            **valid_post.dict(),
+            "id": str(uuid4()),
+            "image": image_url,
+            "user_id": g.user["id"],
+            "created_at": datetime.now().timestamp(),
+            "updated_at": datetime.now().timestamp(),
+        }
     )
-    posts_datastore.create(post)
+    posts_datastore.upsert(post)
     response = jsonify(post.dict())
     response.status_code = 201
     return response
+
+
+@app.route("/api/posts", methods=["PUT"])
+@authenticated_route
+def update_post():
+    if not request.form["id"]:
+        raise InvalidRequest()
+
+    previous_post = posts_datastore.get_post_by_id(request.form["id"])
+
+    if not previous_post:
+        raise InvalidRequest()
+
+    files = list(request.files.values())
+    image_file = files[0] if len(files) > 0 else None
+
+    try:
+        valid_post = PostEditForm.parse_obj(
+            {**request.form, "image": image_file}
+        )
+    except ValidationError as error:
+        raise InvalidPostCreationForm().with_details({"errors": error.errors()})
+
+    if image_file:
+        image_url = image_storage.upload_image(image_file)
+    else:
+        image_url = previous_post["image"]
+    post = Post.parse_obj(
+        {
+            **previous_post,
+            **valid_post.dict(),
+            "image": image_url,
+            "updated_at": datetime.now().timestamp(),
+        }
+    )
+    print(post)
+    posts_datastore.upsert(post)
+    response = jsonify(post.dict())
+    return response
+
+
+@app.route("/api/big-query/top_time_slots")
+def big_query_top_time_slots():
+    return {"rows": [row.dict() for row in big_query.top_time_slots()]}
+
+
+@app.route("/api/big-query/top_deficit_countries")
+def big_query_top_deficit_countries():
+    return {"rows": [row.dict() for row in big_query.top_deficit_countries()]}
+
+
+@app.route("/api/big-query/top_surplus_services")
+def big_query_top_surplus_services():
+    return {"rows": [row.dict() for row in big_query.top_surplus_services()]}
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from typing import BinaryIO
+from typing import BinaryIO, Optional
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -15,6 +15,11 @@ class UserRegistrationForm(BaseModel):
         arbitrary_types_allowed = True
 
 
+class ChangePasswordForm(BaseModel):
+    old_password: str
+    new_password: str
+
+
 class User(BaseModel):
     id: str
     user_name: str
@@ -26,6 +31,16 @@ class PostCreateForm(BaseModel):
     subject: str
     message: str
     image: FileStorage
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class PostEditForm(BaseModel):
+    id: str
+    subject: Optional[str]
+    message: Optional[str]
+    image: Optional[FileStorage]
 
     class Config:
         arbitrary_types_allowed = True

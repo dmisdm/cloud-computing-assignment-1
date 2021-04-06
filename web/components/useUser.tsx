@@ -15,12 +15,11 @@ function isExpired(user: User) {
 }
 
 export function useUser(redirectIfUnauthenticated = true) {
-  const [userState, setUserState] = useUserState<undefined | User>();
+  const [userState, setUserState] = useUserState<null | User>(null);
   const router = useRouter();
 
   React.useEffect(() => {
     if ((!userState || isExpired(userState)) && redirectIfUnauthenticated) {
-      console.log("Expired? " + (userState ? isExpired(userState) : false));
       router.push("/login");
     }
   }, [userState, redirectIfUnauthenticated]);
@@ -47,9 +46,14 @@ export function useUser(redirectIfUnauthenticated = true) {
   const redirectToHome = React.useCallback(() => {
     router.push("/");
   }, []);
+
+  const endSession = React.useCallback(() => {
+    setUserState(null);
+  }, []);
   return {
     user: userState,
     redirectToHome,
     login,
+    endSession,
   };
 }

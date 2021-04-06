@@ -1,26 +1,31 @@
 import Link from "next/link";
 import React from "react";
+import { Nav } from "./Nav";
 
 export const Page = ({
-  showHeader = true,
+  showNav = true,
+  showHeading = true,
   heading,
   ...props
 }: {
-  heading: React.ReactNode;
-  showHeader?: boolean;
+  heading?: React.ReactNode;
+  showNav?: boolean;
+  showHeading?: boolean;
   children: React.ReactNode;
 }) => {
   return (
-    <div className="container">
-      <div className="content">
-        {showHeader && (
-          <header>
-            <nav></nav>
-            <h1>{heading}</h1>
-          </header>
-        )}
-        {props.children}
+    <>
+      {showNav ? <Nav /> : null}
+      <div className="container">
+        <div className="content">
+          {showHeading && (
+            <header>
+              <h1>{heading}</h1>
+            </header>
+          )}
+          {props.children}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
