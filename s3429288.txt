@@ -2,6 +2,1130 @@
 Name: Daniel Manning
 Student ID: s3429288
 Date: 2021-04-07
+Repo: https://github.com/dmisdm/cloud-computing-assignment-1
+Tagged Submission: https://github.com/dmisdm/cloud-computing-assignment-1/tree/submition
+Deployed Site: https://neon-trilogy-307702.ts.r.appspot.com/
+Deployed BigQueries Page: https://neon-trilogy-307702.ts.r.appspot.com/big-queries
+
+Notes:
+If you like, you can view the code in the git repository using the tagged commit link above.
+The file is separated into the 3 sections, delimited by "#--- Begin Task X ---#" and "#--- End Task X ---#".
+
+
+
+#--- Begin Task 1 ---#
+
+#--- .gcloudignore ---#
+# This file specifies files that are *not* uploaded to Google Cloud Platform
+# using gcloud. It follows the same syntax as .gitignore, with the addition of
+# "#!include" directives (which insert the entries of the given .gitignore-style
+# file at that point).
+#
+# For more information, run:
+#   $ gcloud topic gcloudignore
+#
+.gcloudignore
+# If you would like to upload your .git directory, .gitignore file or files
+# from your .gitignore file, remove the corresponding line
+# below:
+.git
+.gitignore
+
+# Python pycache:
+__pycache__/
+# Ignored by the build system
+/setup.cfg
+
+node_modules/
+.next/
+venv/
+
+        
+#--- .gitignore ---#
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+
+        
+#--- app.yaml ---#
+runtime: python39
+handlers:
+  - url: /api/.*
+    script: auto
+
+  - url: /
+    static_files: web/out/index.html
+    upload: web/out/index.html
+
+  - url: /(register|login|user|big-queries)
+    static_files: web/out/\1.html
+    upload: web/out/(.*)\.html
+
+  - url: /(.*)
+    static_files: web/out/\1
+    upload: web/out/(.*)
+
+
+        
+#--- compile_assignment.py ---#
+from git import Repo
+import os
+import datetime
+
+repo = Repo(os.path.dirname(__file__))
+ignored_paths = [
+    "Assignment3Proposal.md",
+    ".vscode/",
+    "api/bigquery.py",
+    "web/public/favicon",
+    "web/yarn.lock",
+]
+
+task_2_code = open("api/bigquery.py").read()
+assignment_3_proposal_text = open("Assignment3Proposal.md", "r").read()
+task_1_text = ""
+for item in repo.tree().traverse():
+    if (
+        item.type == "blob"
+        and len(
+            list(filter(lambda path: item.path.startswith(path), ignored_paths))
+        )
+        == 0
+    ):
+        item_content = open(item.path, "r").read()
+        task_1_text += f"""
+#--- {item.path} ---#
+{item_content}
+
+        """
+output_file = open("s3429288.txt", "w")
+output_file.write(
+    f"""
+Name: Daniel Manning
+Student ID: s3429288
+Date: {datetime.date.today()}
+Repo: https://github.com/dmisdm/cloud-computing-assignment-1
+Tagged Submission: https://github.com/dmisdm/cloud-computing-assignment-1/tree/submition
+Deployed Site: https://neon-trilogy-307702.ts.r.appspot.com/
+Deployed BigQueries Page: https://neon-trilogy-307702.ts.r.appspot.com/big-queries
+
+Notes:
+If you like, you can view the code in the git repository using the tagged commit link above.
+The file is separated into the 3 sections, delimited by "#--- Begin Task X ---#" and "#--- End Task X ---#".
+
+
+
+#--- Begin Task 1 ---#
+{task_1_text}
+#--- End Task 1 ---#
+
+
+#--- Begin Task 2 ---#
+{task_2_code}
+#--- End Task 2 ---#
+
+#--- Begin Task 3 ---#
+{assignment_3_proposal_text}
+#--- End Task 3 ---#          
+
+                  """
+)
+
+
+        
+#--- main.py ---#
+from uuid import uuid4
+from api.errors import (
+    ApplicationError,
+    ExpiredAuthToken,
+    InvalidCredentials,
+    InvalidLoginForm,
+    InvalidPostCreationForm,
+    InvalidRegistrationForm,
+    InvalidRequest,
+    Unauthenticated,
+)
+from flask import Flask, jsonify, request, make_response, g
+from api.schemas import (
+    ChangePasswordForm,
+    LoginForm,
+    Post,
+    PostCreateForm,
+    PostEditForm,
+    User,
+    UserRegistrationForm,
+)
+from api.bigquery import big_query
+from api.datastore import users_datastore, posts_datastore
+from api.image_storage import image_storage
+from jwt import encode, decode, ExpiredSignatureError
+from datetime import timedelta, datetime
+from functools import wraps
+from pydantic import ValidationError
+
+jwt_algorithms = ["HS256"]
+jwt_exp_duration = timedelta(hours=5)
+jwt_secret = "supersecretandshouldnotbeinsourcecode"
+local_web_server = "http://localhost:3000"
+is_dev = False
+
+app = Flask(__name__, template_folder="web/public")
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
+
+
+def authenticate_request():
+    auth_token = request.cookies.get("auth_token")
+    if not auth_token:
+        raise Unauthenticated()
+    try:
+        decoded = decode(auth_token, jwt_secret, algorithms=jwt_algorithms)
+        return decoded
+    except ExpiredSignatureError as err:
+        raise ExpiredAuthToken().with_details(str(err))
+    except Exception as err:
+        raise Unauthenticated().with_details(str(err))
+
+
+@app.route("/api/me", methods=["GET"])
+def me():
+    return jsonify(authenticate_request())
+
+
+def authenticated_route(f):
+    @wraps(f)
+    def fn(*args, **kwargs):
+        g.user = authenticate_request()
+        return f(*args, **kwargs)
+
+    return fn
+
+
+@app.errorhandler(ApplicationError)
+def handle_invalid_usage(error: ApplicationError):
+    return error.to_flask_response()
+
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    form_data = request.json
+
+    try:
+        valid_form = LoginForm(**form_data)
+    except:
+        raise InvalidLoginForm()
+
+    valid_credentials = users_datastore.validate_credentials(
+        **valid_form.dict()
+    )
+    if valid_credentials:
+        local_exp = datetime.now() + jwt_exp_duration
+        exp = datetime.utcnow() + jwt_exp_duration
+
+        payload = {
+            "id": valid_credentials["id"],
+            "user_name": valid_credentials["user_name"],
+            "image": valid_credentials["image"],
+            "exp": exp,
+        }
+        token = encode(
+            payload,
+            jwt_secret,
+            algorithm=jwt_algorithms[0],
+        )
+        del payload["exp"]
+        payload["authExpireDate"] = local_exp.timestamp()
+        response = jsonify(payload)
+        response.set_cookie("auth_token", token)
+        return response
+    else:
+        raise InvalidCredentials()
+
+
+@app.route("/api/register", methods=["POST"])
+def register():
+    data = request.form
+    image_file = list(request.files.values())[0]
+    try:
+        valid_form = UserRegistrationForm(**data, image=image_file)
+    except ValidationError as error:
+        raise InvalidRegistrationForm().with_details({"errors": error.errors()})
+
+    image_url = image_storage.upload_image(image_file)
+    new_user_result = users_datastore.add_user(
+        User.parse_obj({**valid_form.dict(), "image": image_url})
+    )
+    if new_user_result != True:
+        raise new_user_result
+    else:
+
+        response = make_response()
+        response.status_code = 201
+        return response
+
+
+@app.route("/api/change_password", methods=["POST"])
+@authenticated_route
+def change_password():
+    data = request.json
+    try:
+        valid_form = ChangePasswordForm(**data)
+    except ValidationError as error:
+        raise InvalidRequest().with_details({"errors": error.errors()})
+
+    user = User(**users_datastore.get_user_by_id(g.user["id"]))
+
+    if user.password != valid_form.old_password:
+        raise InvalidRequest().with_message("The old password is incorrect")
+
+    user.password = valid_form.new_password
+    users_datastore.update_user(user)
+    return make_response()
+
+
+@app.route("/api/posts", methods=["GET"])
+@authenticated_route
+def top_ten_posts():
+    return {
+        "posts": [
+            {
+                **post,
+                "created_at": post["created_at"].timestamp(),
+                "updated_at": post["updated_at"].timestamp(),
+            }
+            for post in posts_datastore.top_ten()
+        ]
+    }
+
+
+@app.route("/api/my_posts", methods=["GET"])
+@authenticated_route
+def my_posts():
+    return {
+        "posts": [
+            {
+                **post,
+                "created_at": post["created_at"].timestamp(),
+                "updated_at": post["updated_at"].timestamp(),
+            }
+            for post in posts_datastore.user_posts(g.user["id"])
+        ]
+    }
+
+
+@app.route("/api/posts", methods=["POST"])
+@authenticated_route
+def create_post():
+    files = list(request.files.values())
+    image_file = files[0] if len(files) > 0 else None
+
+    try:
+        valid_post = PostCreateForm(**request.form, image=image_file)
+    except ValidationError as error:
+        raise InvalidPostCreationForm().with_details({"errors": error.errors()})
+
+    image_url = image_storage.upload_image(image_file)
+    post = Post.parse_obj(
+        {
+            **valid_post.dict(),
+            "id": str(uuid4()),
+            "image": image_url,
+            "user_id": g.user["id"],
+            "created_at": datetime.now().timestamp(),
+            "updated_at": datetime.now().timestamp(),
+        }
+    )
+    posts_datastore.upsert(post)
+    response = jsonify(post.dict())
+    response.status_code = 201
+    return response
+
+
+@app.route("/api/posts", methods=["PUT"])
+@authenticated_route
+def update_post():
+    if not request.form["id"]:
+        raise InvalidRequest()
+
+    previous_post = posts_datastore.get_post_by_id(request.form["id"])
+
+    if not previous_post:
+        raise InvalidRequest()
+
+    files = list(request.files.values())
+    image_file = files[0] if len(files) > 0 else None
+
+    try:
+        valid_post = PostEditForm.parse_obj(
+            {**request.form, "image": image_file}
+        )
+    except ValidationError as error:
+        raise InvalidPostCreationForm().with_details({"errors": error.errors()})
+
+    if image_file:
+        image_url = image_storage.upload_image(image_file)
+    else:
+        image_url = previous_post["image"]
+    post = Post.parse_obj(
+        {
+            **previous_post,
+            **valid_post.dict(),
+            "image": image_url,
+            "updated_at": datetime.now().timestamp(),
+        }
+    )
+    print(post)
+    posts_datastore.upsert(post)
+    response = jsonify(post.dict())
+    return response
+
+
+@app.route("/api/big-query/top_time_slots")
+def big_query_top_time_slots():
+    return {"rows": [row.dict() for row in big_query.top_time_slots()]}
+
+
+@app.route("/api/big-query/top_deficit_countries")
+def big_query_top_deficit_countries():
+    return {"rows": [row.dict() for row in big_query.top_deficit_countries()]}
+
+
+@app.route("/api/big-query/top_surplus_services")
+def big_query_top_surplus_services():
+    return {"rows": [row.dict() for row in big_query.top_surplus_services()]}
+
+
+if __name__ == "__main__":
+    # This is used when running locally only. When deploying to Google App
+    # Engine, a webserver process such as Gunicorn will serve the app. This
+    # can be configured by adding an `entrypoint` to app.yaml.
+    # Flask's development server will automatically serve static files in
+    # the "static" directory. See:
+    # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
+    # App Engine itself will serve those files as configured in app.yaml.
+    is_dev = True
+    app.run(host="0.0.0.0", port=8080, debug=True)
+
+
+        
+#--- pyproject.toml ---#
+[tool.black]
+line-length = 80
+include = '\.py?$'
+
+        
+#--- requirements.txt ---#
+black==20.8b1
+Flask==1.1.2
+google-cloud-datastore==2.1.0
+google-cloud-storage==1.37.0
+google-cloud-bigquery==2.13.1
+pydantic==1.8.1
+PyJWT==2.0.1
+requests==2.25.1
+
+
+        
+#--- s3429288.txt ---#
+
+Name: Daniel Manning
+Student ID: s3429288
+Date: 2021-04-07
+Repo: https://github.com/dmisdm/cloud-computing-assignment-1
+Tagged Submission: https://github.com/dmisdm/cloud-computing-assignment-1
+
+Notes:
+If you like, you can view the code in the git repository using the tagged commit link above.
+The file is separated into the 3 sections, delimited by "#--- Begin Task X ---#" and "#--- End Task X ---#".
+
+
+
+#--- Begin Task 1 ---#
+
+#--- .gcloudignore ---#
+# This file specifies files that are *not* uploaded to Google Cloud Platform
+# using gcloud. It follows the same syntax as .gitignore, with the addition of
+# "#!include" directives (which insert the entries of the given .gitignore-style
+# file at that point).
+#
+# For more information, run:
+#   $ gcloud topic gcloudignore
+#
+.gcloudignore
+# If you would like to upload your .git directory, .gitignore file or files
+# from your .gitignore file, remove the corresponding line
+# below:
+.git
+.gitignore
+
+# Python pycache:
+__pycache__/
+# Ignored by the build system
+/setup.cfg
+
+node_modules/
+.next/
+venv/
+
+        
+#--- .gitignore ---#
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+
+        
+#--- app.yaml ---#
+runtime: python39
+handlers:
+  - url: /api/.*
+    script: auto
+
+  - url: /
+    static_files: web/out/index.html
+    upload: web/out/index.html
+
+  - url: /(register|login|user|big-queries)
+    static_files: web/out/\1.html
+    upload: web/out/(.*)\.html
+
+  - url: /(.*)
+    static_files: web/out/\1
+    upload: web/out/(.*)
+
+
+        
+#--- compile_assignment.py ---#
+from git import Repo
+import os
+import datetime
+
+repo = Repo(os.path.dirname(__file__))
+ignored_paths = [
+    "Assignment3Proposal.md",
+    ".vscode/",
+    "api/bigquery.py",
+    "web/public/favicon",
+    "web/yarn.lock",
+]
+
+task_2_code = open("api/bigquery.py").read()
+assignment_3_proposal_text = open("Assignment3Proposal.md", "r").read()
+task_1_text = ""
+for item in repo.tree().traverse():
+    if (
+        item.type == "blob"
+        and len(
+            list(filter(lambda path: item.path.startswith(path), ignored_paths))
+        )
+        == 0
+    ):
+        item_content = open(item.path, "r").read()
+        task_1_text += f"""
+#--- {item.path} ---#
+{item_content}
+
+        """
+output_file = open("s3429288.txt", "w")
+output_file.write(
+    f"""
+Name: Daniel Manning
+Student ID: s3429288
+Date: {datetime.date.today()}
+Repo: https://github.com/dmisdm/cloud-computing-assignment-1
+Tagged Submission: https://github.com/dmisdm/cloud-computing-assignment-1
+
+Notes:
+If you like, you can view the code in the git repository using the tagged commit link above.
+The file is separated into the 3 sections, delimited by "#--- Begin Task X ---#" and "#--- End Task X ---#".
+
+
+
+#--- Begin Task 1 ---#
+{task_1_text}
+#--- End Task 1 ---#
+
+
+#--- Begin Task 2 ---#
+{task_2_code}
+#--- End Task 2 ---#
+
+#--- Begin Task 3 ---#
+{assignment_3_proposal_text}
+#--- End Task 3 ---#          
+
+                  """
+)
+
+
+        
+#--- main.py ---#
+from uuid import uuid4
+from api.errors import (
+    ApplicationError,
+    ExpiredAuthToken,
+    InvalidCredentials,
+    InvalidLoginForm,
+    InvalidPostCreationForm,
+    InvalidRegistrationForm,
+    InvalidRequest,
+    Unauthenticated,
+)
+from flask import Flask, jsonify, request, make_response, g
+from api.schemas import (
+    ChangePasswordForm,
+    LoginForm,
+    Post,
+    PostCreateForm,
+    PostEditForm,
+    User,
+    UserRegistrationForm,
+)
+from api.bigquery import big_query
+from api.datastore import users_datastore, posts_datastore
+from api.image_storage import image_storage
+from jwt import encode, decode, ExpiredSignatureError
+from datetime import timedelta, datetime
+from functools import wraps
+from pydantic import ValidationError
+
+jwt_algorithms = ["HS256"]
+jwt_exp_duration = timedelta(hours=5)
+jwt_secret = "supersecretandshouldnotbeinsourcecode"
+local_web_server = "http://localhost:3000"
+is_dev = False
+
+app = Flask(__name__, template_folder="web/public")
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
+
+
+def authenticate_request():
+    auth_token = request.cookies.get("auth_token")
+    if not auth_token:
+        raise Unauthenticated()
+    try:
+        decoded = decode(auth_token, jwt_secret, algorithms=jwt_algorithms)
+        return decoded
+    except ExpiredSignatureError as err:
+        raise ExpiredAuthToken().with_details(str(err))
+    except Exception as err:
+        raise Unauthenticated().with_details(str(err))
+
+
+@app.route("/api/me", methods=["GET"])
+def me():
+    return jsonify(authenticate_request())
+
+
+def authenticated_route(f):
+    @wraps(f)
+    def fn(*args, **kwargs):
+        g.user = authenticate_request()
+        return f(*args, **kwargs)
+
+    return fn
+
+
+@app.errorhandler(ApplicationError)
+def handle_invalid_usage(error: ApplicationError):
+    return error.to_flask_response()
+
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    form_data = request.json
+
+    try:
+        valid_form = LoginForm(**form_data)
+    except:
+        raise InvalidLoginForm()
+
+    valid_credentials = users_datastore.validate_credentials(
+        **valid_form.dict()
+    )
+    if valid_credentials:
+        local_exp = datetime.now() + jwt_exp_duration
+        exp = datetime.utcnow() + jwt_exp_duration
+
+        payload = {
+            "id": valid_credentials["id"],
+            "user_name": valid_credentials["user_name"],
+            "image": valid_credentials["image"],
+            "exp": exp,
+        }
+        token = encode(
+            payload,
+            jwt_secret,
+            algorithm=jwt_algorithms[0],
+        )
+        del payload["exp"]
+        payload["authExpireDate"] = local_exp.timestamp()
+        response = jsonify(payload)
+        response.set_cookie("auth_token", token)
+        return response
+    else:
+        raise InvalidCredentials()
+
+
+@app.route("/api/register", methods=["POST"])
+def register():
+    data = request.form
+    image_file = list(request.files.values())[0]
+    try:
+        valid_form = UserRegistrationForm(**data, image=image_file)
+    except ValidationError as error:
+        raise InvalidRegistrationForm().with_details({"errors": error.errors()})
+
+    image_url = image_storage.upload_image(image_file)
+    new_user_result = users_datastore.add_user(
+        User.parse_obj({**valid_form.dict(), "image": image_url})
+    )
+    if new_user_result != True:
+        raise new_user_result
+    else:
+
+        response = make_response()
+        response.status_code = 201
+        return response
+
+
+@app.route("/api/change_password", methods=["POST"])
+@authenticated_route
+def change_password():
+    data = request.json
+    try:
+        valid_form = ChangePasswordForm(**data)
+    except ValidationError as error:
+        raise InvalidRequest().with_details({"errors": error.errors()})
+
+    user = User(**users_datastore.get_user_by_id(g.user["id"]))
+
+    if user.password != valid_form.old_password:
+        raise InvalidRequest().with_message("The old password is incorrect")
+
+    user.password = valid_form.new_password
+    users_datastore.update_user(user)
+    return make_response()
+
+
+@app.route("/api/posts", methods=["GET"])
+@authenticated_route
+def top_ten_posts():
+    return {
+        "posts": [
+            {
+                **post,
+                "created_at": post["created_at"].timestamp(),
+                "updated_at": post["updated_at"].timestamp(),
+            }
+            for post in posts_datastore.top_ten()
+        ]
+    }
+
+
+@app.route("/api/my_posts", methods=["GET"])
+@authenticated_route
+def my_posts():
+    return {
+        "posts": [
+            {
+                **post,
+                "created_at": post["created_at"].timestamp(),
+                "updated_at": post["updated_at"].timestamp(),
+            }
+            for post in posts_datastore.user_posts(g.user["id"])
+        ]
+    }
+
+
+@app.route("/api/posts", methods=["POST"])
+@authenticated_route
+def create_post():
+    files = list(request.files.values())
+    image_file = files[0] if len(files) > 0 else None
+
+    try:
+        valid_post = PostCreateForm(**request.form, image=image_file)
+    except ValidationError as error:
+        raise InvalidPostCreationForm().with_details({"errors": error.errors()})
+
+    image_url = image_storage.upload_image(image_file)
+    post = Post.parse_obj(
+        {
+            **valid_post.dict(),
+            "id": str(uuid4()),
+            "image": image_url,
+            "user_id": g.user["id"],
+            "created_at": datetime.now().timestamp(),
+            "updated_at": datetime.now().timestamp(),
+        }
+    )
+    posts_datastore.upsert(post)
+    response = jsonify(post.dict())
+    response.status_code = 201
+    return response
+
+
+@app.route("/api/posts", methods=["PUT"])
+@authenticated_route
+def update_post():
+    if not request.form["id"]:
+        raise InvalidRequest()
+
+    previous_post = posts_datastore.get_post_by_id(request.form["id"])
+
+    if not previous_post:
+        raise InvalidRequest()
+
+    files = list(request.files.values())
+    image_file = files[0] if len(files) > 0 else None
+
+    try:
+        valid_post = PostEditForm.parse_obj(
+            {**request.form, "image": image_file}
+        )
+    except ValidationError as error:
+        raise InvalidPostCreationForm().with_details({"errors": error.errors()})
+
+    if image_file:
+        image_url = image_storage.upload_image(image_file)
+    else:
+        image_url = previous_post["image"]
+    post = Post.parse_obj(
+        {
+            **previous_post,
+            **valid_post.dict(),
+            "image": image_url,
+            "updated_at": datetime.now().timestamp(),
+        }
+    )
+    print(post)
+    posts_datastore.upsert(post)
+    response = jsonify(post.dict())
+    return response
+
+
+@app.route("/api/big-query/top_time_slots")
+def big_query_top_time_slots():
+    return {"rows": [row.dict() for row in big_query.top_time_slots()]}
+
+
+@app.route("/api/big-query/top_deficit_countries")
+def big_query_top_deficit_countries():
+    return {"rows": [row.dict() for row in big_query.top_deficit_countries()]}
+
+
+@app.route("/api/big-query/top_surplus_services")
+def big_query_top_surplus_services():
+    return {"rows": [row.dict() for row in big_query.top_surplus_services()]}
+
+
+if __name__ == "__main__":
+    # This is used when running locally only. When deploying to Google App
+    # Engine, a webserver process such as Gunicorn will serve the app. This
+    # can be configured by adding an `entrypoint` to app.yaml.
+    # Flask's development server will automatically serve static files in
+    # the "static" directory. See:
+    # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
+    # App Engine itself will serve those files as configured in app.yaml.
+    is_dev = True
+    app.run(host="0.0.0.0", port=8080, debug=True)
+
+
+        
+#--- pyproject.toml ---#
+[tool.black]
+line-length = 80
+include = '\.py?$'
+
+        
+#--- requirements.txt ---#
+black==20.8b1
+Flask==1.1.2
+google-cloud-datastore==2.1.0
+google-cloud-storage==1.37.0
+google-cloud-bigquery==2.13.1
+pydantic==1.8.1
+PyJWT==2.0.1
+requests==2.25.1
+
+
+        
+#--- s3429288.txt ---#
+
+Name: Daniel Manning
+Student ID: s3429288
+Date: 2021-04-07
 
 
 #--- Begin Task 1 ---#
@@ -484,6 +1608,3834 @@ pydantic==1.8.1
 PyJWT==2.0.1
 requests==2.25.1
 
+
+        
+#--- api/config.py ---#
+import os
+
+project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "neon-trilogy-307702")
+
+        
+#--- api/datastore.py ---#
+from api.schemas import Post, User
+from api.errors import (
+    UserIDAlreadyExists,
+    UserNameAlreadyExists,
+)
+from typing import Union, Literal
+
+from google.cloud import datastore
+from google.cloud.datastore.entity import Entity
+
+
+datastore_client = datastore.Client()
+
+
+class UsersDatastore:
+    def __init__(self, datastore_client: datastore.Client):
+        self.datastore_client = datastore_client
+
+    def get_users(
+        self, offset=None, limit=None, filters: list[(str, str)] = []
+    ) -> list[Entity]:
+        query = self.datastore_client.query(kind="user")
+        for filter in filters:
+            query = query.add_filter(filter[0], "=", filter[1])
+
+        return list(query.fetch(limit=limit, offset=offset))
+
+    def get_user_by_id(self, id: str):
+        return self.datastore_client.get(
+            key=self.datastore_client.key("user", id)
+        )
+
+    def validate_user_uniqueness(self, id: str, user_name: str):
+        if self.get_user_by_id(id):
+            return UserIDAlreadyExists()
+
+        existing_users = self.get_users(
+            filters=[
+                ("user_name", user_name),
+            ]
+        )
+
+        if len(existing_users) > 0:
+            return UserNameAlreadyExists()
+
+        return None
+
+    def add_user(self, user: User):
+        uniqueness_error = self.validate_user_uniqueness(
+            id=user.id, user_name=user.user_name
+        )
+        if uniqueness_error:
+            return uniqueness_error
+
+        entity = datastore.Entity(key=datastore_client.key("user", user.id))
+
+        entity.update(**user.dict())
+        self.datastore_client.put(entity)
+        return True
+
+    def update_user(self, user: User):
+        found_user = self.get_user_by_id(user.id)
+        if found_user:
+            found_user.update(**user.dict())
+            self.datastore_client.put(found_user)
+            return True
+        return "User not found"
+
+    def validate_credentials(self, id: str, password: str):
+        found_users = self.get_users(
+            filters=[
+                ("__key__", self.datastore_client.key("user", id)),
+                ("password", password),
+            ]
+        )
+        if len(found_users) == 1:
+            return found_users[0]
+        else:
+            return False
+
+
+class PostsDatastore:
+    def __init__(self, datastore_client: datastore.Client) -> None:
+        self.datastore_client = datastore_client
+
+    def top_ten(self):
+        posts_query = self.datastore_client.query(kind="post")
+        posts_query.order = ["-updated_at"]
+        posts = list(posts_query.fetch(limit=10))
+
+        users = users_datastore.get_users()
+
+        return [
+            {
+                **post,
+                "user": next(
+                    (user for user in users if user["id"] == post["user_id"]),
+                    "",
+                ),
+            }
+            for post in posts
+        ]
+
+    def upsert(self, post: Post):
+        post_entity = datastore.Entity(
+            key=datastore_client.key("post", post.id)
+        )
+        post_entity.update(post)
+        self.datastore_client.put(post_entity)
+        return True
+
+    def get_post_by_id(self, post_id: str):
+        return self.datastore_client.get(
+            key=self.datastore_client.key("post", post_id)
+        )
+
+    def user_posts(self, user_id: str):
+        posts_query = self.datastore_client.query(kind="post")
+        posts_query.order = ["-updated_at"]
+        posts_query.add_filter("user_id", "=", user_id)
+        posts = list(posts_query.fetch())
+
+        user = users_datastore.get_user_by_id(user_id)
+
+        return [{**post, "user": user} for post in posts]
+
+
+users_datastore = UsersDatastore(datastore_client=datastore_client)
+posts_datastore = PostsDatastore(datastore_client=datastore_client)
+
+        
+#--- api/errors.py ---#
+from typing import Any
+from flask import json
+
+
+class ApplicationError(Exception):
+    status_code = 500
+    message = "Internal Error"
+    details: Any = None
+
+    def with_details(self, data: object):
+        self.details = data
+        return self
+
+    def with_message(self, message: str):
+        self.message = message
+        return self
+
+    def to_flask_response(self):
+        response = json.jsonify(
+            {
+                "error": {
+                    "name": self.__class__.__name__,
+                    "message": self.message,
+                    "details": self.details,
+                }
+            }
+        )
+        response.status_code = self.status_code
+        return response
+
+
+class InvalidRequest(ApplicationError):
+    status_code = 400
+    message = "Invalid request"
+
+
+# Auth errors
+class InvalidCredentials(ApplicationError):
+    status_code = 400
+    message = "The ID or password was incorrect"
+
+
+class Unauthenticated(ApplicationError):
+    status_code = 401
+    message = "A valid authentication token is required"
+
+
+class ExpiredAuthToken(ApplicationError):
+    status_code = 401
+    message = "Expired authentication token"
+
+
+# Validation errors
+class InvalidLoginForm(ApplicationError):
+    status_code = 400
+    message = "The ID or password is invalid"
+
+
+class InvalidRegistrationForm(ApplicationError):
+    status_code = 400
+    message = "Invalid registration form data"
+
+
+class InvalidPostCreationForm(ApplicationError):
+    status_code = 400
+    message = "Invalid post creation data"
+
+
+# Logic errors
+class UserIDAlreadyExists(ApplicationError):
+    status_code = 400
+    message = "The ID already exists"
+
+
+class UserNameAlreadyExists(ApplicationError):
+    status_code = 400
+    message = "The username already exists"
+
+        
+#--- api/image_storage.py ---#
+from google.cloud import storage
+from uuid import uuid4
+from werkzeug.datastructures import FileStorage
+from api.config import project_id
+
+
+class ImageStorage:
+    client = storage.Client()
+    bucket_name = f"{project_id}.appspot.com"
+    bucket = client.get_bucket(bucket_name)
+
+    def upload_image(self, image: FileStorage):
+        name = f"{uuid4()}-{image.filename}"
+        blob = self.bucket.blob(name)
+        blob.upload_from_file(image.stream)
+        blob.make_public()
+        return blob.public_url
+
+
+image_storage = ImageStorage()
+
+
+        
+#--- api/index.yaml ---#
+indexes:
+  - kind: post
+    properties:
+      - name: user_id
+      - name: updated_at
+        direction: desc
+
+
+        
+#--- api/schemas.py ---#
+from typing import Optional
+from pydantic import BaseModel
+from datetime import datetime
+
+from werkzeug.datastructures import FileStorage
+
+
+class UserRegistrationForm(BaseModel):
+    id: str
+    user_name: str
+    password: str
+    image: FileStorage
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class ChangePasswordForm(BaseModel):
+    old_password: str
+    new_password: str
+
+
+class User(BaseModel):
+    id: str
+    user_name: str
+    password: str
+    image: str
+
+
+class PostCreateForm(BaseModel):
+    subject: str
+    message: str
+    image: FileStorage
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class PostEditForm(BaseModel):
+    id: str
+    subject: Optional[str]
+    message: Optional[str]
+    image: Optional[FileStorage]
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class Post(PostCreateForm):
+    id: str
+    user_id: str
+    image: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class PostViewModel(Post):
+    user_image: str
+
+
+class LoginForm(BaseModel):
+    id: str
+    password: str
+
+
+        
+#--- api/seed.py ---#
+import os
+
+from .datastore import users_datastore
+from .schemas import User
+
+project_id = os.getenv("GCLOUD_PROJECT", "neon-trilogy-307702")
+
+base_image_url = (
+    f"https://storage.googleapis.com/{project_id}.appspot.com/Numbers/"
+)
+ints = list("01234567890123456789")
+
+users = [
+    {
+        "id": f"s3429288{index}",
+        "user_name": f"Daniel Manning{index}",
+        "password": "".join(ints[index : index + 6]),
+        "image": f"{base_image_url}{index}.png",
+    }
+    for index in range(0, 10)
+]
+
+for user in users:
+    result = users_datastore.add_user(
+        User(
+            id=user["id"],
+            user_name=user["user_name"],
+            password=user["password"],
+            image=user["image"],
+        ),
+    )
+    user_id = user["id"]
+    if result == True:
+        print(f"Created user {user_id}")
+    else:
+        print(f"Error creating {user_id}: {result.message}")
+
+
+os.system(
+    f"gcloud datastore indexes create {os.path.dirname(__file__)}/index.yaml"
+)
+
+
+        
+#--- web/.gitignore ---#
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+
+        
+#--- web/next-env.d.ts ---#
+/// <reference types="next" />
+/// <reference types="next/types/global" />
+
+
+        
+#--- web/next.config.js ---#
+module.exports = {
+  rewrites() {
+    return {
+      fallback: [
+        {
+          source: "/:path*",
+          destination: "http://localhost:8080/:path*",
+        },
+      ],
+    };
+  },
+};
+
+
+        
+#--- web/package.json ---#
+{
+  "name": "web",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build && next export"
+  },
+  "dependencies": {
+    "@emotion/core": "^11.0.0",
+    "@emotion/react": "^11.1.5",
+    "@emotion/styled": "^11.1.5",
+    "@rest-hooks/rest": "^2.0.4",
+    "@types/date-fns": "^2.6.0",
+    "@types/use-persisted-state": "^0.3.0",
+    "@xstyled/emotion": "^2.4.1",
+    "@xstyled/util": "^2.2.3",
+    "date-fns": "^2.19.0",
+    "next": "^10.1.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-hook-form": "^7.0.0",
+    "rest-hooks": "^5.0.16",
+    "superstruct": "^0.15.1",
+    "typescript": "^4.2.3",
+    "use-persisted-state": "^0.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.37",
+    "@types/react": "^17",
+    "@types/react-dom": "^17"
+  }
+}
+
+
+        
+#--- web/styles.css ---#
+@import "./public/styles/mono.min.css";
+@import "./public/styles/color.min.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.nav a {
+  padding: 0.5rem;
+}
+
+
+        
+#--- web/tsconfig.json ---#
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
+
+
+        
+#--- web/components/ErrorMessage.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+import { FormState } from "react-hook-form";
+import { FormModel } from "../pages/register";
+
+export const ErrorMessage = ({
+  formState,
+  field,
+}: {
+  formState: FormState<FormModel>;
+  field: keyof FormModel;
+}) => {
+  const fieldErrors = formState.errors[field];
+  return (
+    (fieldErrors?.message && formState.touchedFields[field] && (
+      <x.span className="taright small error" pb="1rem">
+        {fieldErrors.message}
+      </x.span>
+    )) ||
+    null
+  );
+};
+
+
+        
+#--- web/components/Field.tsx ---#
+import React from "react";
+import { x } from "@xstyled/emotion";
+
+export const Field = React.forwardRef(
+  (
+    { label, ...props }: { label: string } & JSX.IntrinsicElements["input"],
+    ref: React.ForwardedRef<HTMLInputElement>
+  ) => (
+    <div>
+      <x.label display="flex" alignItems="center">
+        <x.span flex={1}>{label}</x.span>
+        <input className="mh input border" {...props} ref={ref} />
+      </x.label>
+    </div>
+  )
+);
+
+
+        
+#--- web/components/Nav.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+import { useUser } from "./useUser";
+import Link from "next/link";
+import { Padding } from "./Padding";
+import { UserAvatar } from "./UserAvatar";
+
+export function Nav() {
+  const { user, endSession } = useUser(false);
+
+  return user ? (
+    <x.nav
+      fontSize="1.8rem"
+      display="flex"
+      h="10rem"
+      w="100%"
+      alignItems="center"
+      px="2rem"
+    >
+      <x.h4 whiteSpace="nowrap" flexShrink={0} className="large">
+        <Link href="/">
+          <a>The Turing Network </a>
+        </Link>
+      </x.h4>
+      <x.div flex={1} />
+      <x.div display="flex" alignItems="center">
+        <x.div textAlign="end">
+          <Link href="/user">
+            <a className="normal">{user.user_name}</a>
+          </Link>
+          <br />
+          <Link href="/login">
+            <a className="small" onClick={endSession}>
+              Logout
+            </a>
+          </Link>
+        </x.div>
+        <Padding />
+        <UserAvatar src={user.image} size="medium" />
+      </x.div>
+    </x.nav>
+  ) : null;
+}
+
+
+        
+#--- web/components/Padding.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+export const Padding = ({ size = 1 }: { size?: number }) => (
+  <x.div w={`${size}rem`} h={`${size}rem`} flexShrink={0} />
+);
+
+
+        
+#--- web/components/Page.tsx ---#
+import Link from "next/link";
+import React from "react";
+import { Nav } from "./Nav";
+
+export const Page = ({
+  showNav = true,
+  showHeading = true,
+  heading,
+  ...props
+}: {
+  heading?: React.ReactNode;
+  showNav?: boolean;
+  showHeading?: boolean;
+  children: React.ReactNode;
+}) => {
+  return (
+    <>
+      {showNav ? <Nav /> : null}
+      <div className="container">
+        <div className="content">
+          {showHeading && (
+            <header>
+              <h1>{heading}</h1>
+            </header>
+          )}
+          {props.children}
+        </div>
+      </div>
+    </>
+  );
+};
+
+
+        
+#--- web/components/Post.tsx ---#
+import { x } from "@xstyled/emotion";
+import { format, fromUnixTime } from "date-fns";
+import React from "react";
+import { Post } from "./models";
+import { UserAvatar } from "./UserAvatar";
+
+export function PostCard({
+  post,
+  onEditClick,
+}: {
+  onEditClick?: () => void;
+  post: typeof Post.TYPE;
+}) {
+  const date = format(fromUnixTime(post.updated_at), "PPPppp");
+  return (
+    <div className="card bg-grey rounded mv">
+      <x.div display="flex" alignItems="center">
+        <x.h4 margin={0}>{post.subject}</x.h4>
+
+        <x.span flex={1} />
+        <x.div display="flex" alignItems="center">
+          <x.span className="nano">{post.user.user_name}</x.span>
+          <x.span w="1rem" />
+          <UserAvatar src={post.user.image} />
+        </x.div>
+      </x.div>
+      <x.div className="nano">{date}</x.div>
+
+      <div style={{ width: "100%", textAlign: "center", padding: "1rem" }}>
+        <img
+          src={post.image}
+          alt={post.subject}
+          style={{
+            minHeight: "12rem",
+            objectFit: "contain",
+            maxHeight: "20rem",
+            textAlign: "center",
+          }}
+        />
+      </div>
+      <blockquote
+        className="small"
+        style={{
+          whiteSpace: "pre-line",
+          maxHeight: "30rem",
+          overflow: "auto",
+        }}
+      >
+        {post.message}
+      </blockquote>
+      {onEditClick && (
+        <x.button w="100%" className="btn small" onClick={onEditClick}>
+          Edit
+        </x.button>
+      )}
+    </div>
+  );
+}
+
+
+        
+#--- web/components/PostForm.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+import { useForm, useFormContext } from "react-hook-form";
+
+export function PostForm({
+  onSuccess,
+  initialData,
+  onCancel,
+  ...props
+}: {
+  initialData?: {
+    id?: string;
+    subject: string;
+    message: string;
+    image: string;
+  };
+  onCancel?: () => void;
+  onSuccess?: () => void;
+} & (
+  | {
+      edit?: false;
+      createPost: (post: {
+        subject: string;
+        message: string;
+        image: File;
+      }) => Promise<any>;
+    }
+  | {
+      edit: true;
+      editPost: (post: {
+        id: string;
+        subject?: string;
+        message?: string;
+        image?: File;
+      }) => Promise<unknown>;
+    }
+)) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState,
+    setValue,
+    getValues,
+  } = useForm<{
+    id: string;
+    message: string;
+    subject: string;
+    image: File;
+  }>({ defaultValues: initialData });
+  const values = getValues();
+
+  const [localImage, setLocalImage] = React.useState<File>();
+  return (
+    <form
+      onSubmit={handleSubmit(async (values) => {
+        if (props.edit) {
+          await props.editPost(values);
+        } else {
+          await props.createPost(values);
+        }
+
+        reset();
+        setLocalImage(undefined);
+        onSuccess && onSuccess();
+      })}
+    >
+      <div className="p">
+        <input
+          disabled={formState.isSubmitting}
+          aria-label="subject"
+          className="input pill border b-black"
+          placeholder="Subject"
+          required
+          maxLength={120}
+          {...register("subject", {
+            required: true,
+            maxLength: 120,
+            setValueAs: (v) => v.trim(),
+          })}
+        />
+        <br />
+        <textarea
+          disabled={formState.isSubmitting}
+          aria-label="message"
+          placeholder="Write a compelling message"
+          className="pill input border b-black"
+          required
+          maxLength={500}
+          style={{ resize: "none", width: "100%", minHeight: "10rem" }}
+          {...register("message", {
+            required: true,
+            maxLength: 500,
+            setValueAs: (v) => v.trim(),
+          })}
+        />
+        <br />
+        {(values.image || localImage) && (
+          <x.img
+            maxHeight="20rem"
+            w="100%"
+            objectFit="contain"
+            src={
+              typeof values.image === "string"
+                ? values.image
+                : URL.createObjectURL(localImage)
+            }
+          />
+        )}
+        <br />
+        <label>
+          Image
+          <input
+            disabled={formState.isSubmitting}
+            type="file"
+            className="pill p"
+            accept=".png,.gif,.jpg,.jpeg"
+            multiple={false}
+            onChange={(e) => {
+              const first = e.currentTarget.files?.item(0);
+              if (first) {
+                setValue("image", first);
+                setLocalImage(first);
+              }
+            }}
+            required={!props.edit}
+          />
+        </label>
+
+        <x.div h="1rem" />
+        <x.div display="flex">
+          {onCancel && (
+            <x.button
+              disabled={formState.isSubmitting}
+              flex={1}
+              className="btn pill "
+              onClick={onCancel}
+            >
+              Cancel
+            </x.button>
+          )}
+          <x.input
+            disabled={formState.isSubmitting}
+            flex={1}
+            className="btn primary pill white"
+            type="submit"
+            value={
+              formState.isSubmitting
+                ? "Posting..."
+                : props.edit
+                ? "Update"
+                : "Post"
+            }
+          />
+        </x.div>
+      </div>
+    </form>
+  );
+}
+
+
+        
+#--- web/components/UserAvatar.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+export function UserAvatar({
+  src,
+  size = "small",
+}: {
+  src: string;
+  size?: "small" | "medium";
+}) {
+  const radius = size === "small" ? "3rem" : "6rem";
+  return (
+    <x.img
+      borderRadius="50%"
+      src={src}
+      objectFit="cover"
+      h={radius}
+      w={radius}
+      alt="user profile image"
+      boxShadow="2px 1px 8px #ccc "
+    />
+  );
+}
+
+
+        
+#--- web/components/models.tsx ---#
+import { type, string, number, optional, unknown, array } from "superstruct";
+
+export const userRecord = type({
+  id: string(),
+  user_name: string(),
+  image: string(),
+  authExpireDate: number(),
+});
+
+export const errorResponse = type({
+  error: type({
+    detail: optional(unknown()),
+    message: string(),
+    name: string(),
+  }),
+});
+
+export const Post = type({
+  id: string(),
+  subject: string(),
+  message: string(),
+  image: string(),
+  user_id: string(),
+  created_at: number(),
+  updated_at: number(),
+  user: type({
+    image: string(),
+    id: string(),
+    user_name: string(),
+  }),
+});
+
+export const Posts = type({
+  posts: array(Post),
+});
+
+
+        
+#--- web/components/objectToFormData.ts ---#
+export function objectToFormData(obj: Record<string, string | File>) {
+  const formData = new FormData();
+  Object.entries(obj).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  return formData;
+}
+
+
+        
+#--- web/components/useApi.ts ---#
+import React from "react";
+
+export const useApi = <Result>(makeRequest: () => Promise<Result>) => {
+  const [result, setResult] = React.useState<Result>();
+  const [loading, setLoading] = React.useState(true);
+  const fetch = React.useCallback(() => {
+    setLoading(true);
+    makeRequest()
+      .then((result) => {
+        setResult(result);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [makeRequest]);
+  React.useEffect(() => {
+    fetch();
+  }, []);
+  return {
+    result,
+    loading,
+    fetch,
+  };
+};
+
+
+        
+#--- web/components/usePosts.ts ---#
+import React from "react";
+import { Posts } from "./models";
+import { objectToFormData } from "./objectToFormData";
+import { useUser } from "./useUser";
+
+export function usePosts(scope: "user" | "top10" = "top10") {
+  useUser();
+  const [posts, setPosts] = React.useState<typeof Posts.TYPE>({ posts: [] });
+  const [loading, setLoading] = React.useState(true);
+  const fetchPosts = React.useCallback(() => {
+    setLoading(true);
+    fetch(scope === "user" ? "/api/my_posts" : "/api/posts")
+      .then(async (res) => {
+        if (!res.ok) {
+          return [];
+        }
+        setPosts(Posts.create(await res.json()));
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [scope]);
+  React.useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const createPost = React.useCallback(
+    async (post: { subject: string; message: string; image: File }) => {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        body: objectToFormData(post),
+      });
+      if (res.ok) {
+        return res.json();
+      } else {
+        return {
+          error: await res.json(),
+        };
+      }
+    },
+    []
+  );
+
+  const editPost = React.useCallback(
+    async (post: {
+      id: string;
+      message?: string;
+      subject?: string;
+      image?: File | string;
+    }) => {
+      const res = await fetch(`/api/posts`, {
+        method: "PUT",
+        body: objectToFormData(post),
+      });
+      if (res.ok) {
+        return res.json();
+      } else {
+        return {
+          error: await res.json(),
+        };
+      }
+    },
+    []
+  );
+  return {
+    state: loading ? "loading" : posts,
+    createPost,
+    editPost,
+    fetchPosts,
+  } as const;
+}
+
+
+        
+#--- web/components/useUser.tsx ---#
+import createPersistedState from "use-persisted-state";
+import { parse, isBefore, fromUnixTime } from "date-fns";
+import React from "react";
+import { useRouter } from "next/router";
+import { errorResponse, userRecord } from "./models";
+
+export type Error = typeof errorResponse.TYPE;
+
+const useUserState = createPersistedState("user");
+
+export type User = typeof userRecord.TYPE;
+
+function isExpired(user: User) {
+  return isBefore(fromUnixTime(user.authExpireDate), new Date());
+}
+
+export function useUser(redirectIfUnauthenticated = true) {
+  const [userState, setUserState] = useUserState<null | User>(null);
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if ((!userState || isExpired(userState)) && redirectIfUnauthenticated) {
+      router.push("/login");
+    }
+  }, [userState, redirectIfUnauthenticated]);
+
+  const login = React.useCallback(
+    async ({ id, password }: { id: string; password: string }) => {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, password }),
+      });
+      if (res.ok) {
+        const user = userRecord.create(await res.json());
+        setUserState(user);
+        return user;
+      } else {
+        return errorResponse.create(await res.json());
+      }
+    },
+    []
+  );
+  const redirectToHome = React.useCallback(() => {
+    router.push("/");
+  }, []);
+
+  const endSession = React.useCallback(() => {
+    setUserState(null);
+  }, []);
+  return {
+    user: userState,
+    redirectToHome,
+    login,
+    endSession,
+  };
+}
+
+
+        
+#--- web/pages/_app.tsx ---#
+import Head from "next/head";
+import React from "react";
+import "../styles.css";
+
+// This default export is required in a new `pages/_app.js` file.
+export default function MyApp<Props>({
+  Component,
+  pageProps,
+}: {
+  Component: React.ComponentType<Props>;
+  pageProps: Props;
+}) {
+  return (
+    <>
+      <Head>
+        <link rel="stylesheet" href="/styles/light.min.css" />
+        <title>The Turing Network</title>
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+      </Head>
+      <Component {...pageProps} />
+    </>
+  );
+}
+
+
+        
+#--- web/pages/big-queries.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+import { Padding } from "../components/Padding";
+import { Page } from "../components/Page";
+import { useApi } from "../components/useApi";
+
+const get_top_time_slots = () =>
+  fetch("/api/big-query/top_time_slots").then(async (res) =>
+    res.ok ? res.json() : { error: await res.json() }
+  );
+const get_top_deficit_countries = () =>
+  fetch("/api/big-query/top_deficit_countries").then(async (res) =>
+    res.ok ? res.json() : { error: await res.json() }
+  );
+const get_top_surplus_services = () =>
+  fetch("/api/big-query/top_surplus_services").then(async (res) =>
+    res.ok ? res.json() : { error: await res.json() }
+  );
+
+function DataTable<Key extends string, Row extends Record<Key, any>>(props: {
+  headings: { key: Key; label: string }[];
+  data?: Row[];
+  loadingData?: boolean;
+}) {
+  return (
+    <x.table h="40rem" w="100%" overflow="auto">
+      <thead>
+        <tr>
+          {props.headings.map((heading) => (
+            <th key={heading.key}>{heading.label}</th>
+          ))}
+        </tr>
+      </thead>
+
+      <tbody>
+        {props.loadingData
+          ? "Loading..."
+          : props.data && props.data.length
+          ? props.data.map((row, i) => (
+              <tr key={i}>
+                {props.headings.map((heading) => (
+                  <td key={heading.key}>{row[heading.key]}</td>
+                ))}
+              </tr>
+            ))
+          : "No rows!"}
+      </tbody>
+    </x.table>
+  );
+}
+const BigQueriesPage = () => {
+  const topTimeSlots = useApi<{
+    rows: [{ time_ref: string; trade_value: number }];
+  }>(get_top_time_slots);
+  const topDeficitCountries = useApi<{
+    rows: [
+      {
+        country_label: string;
+        product_type: string;
+        status: string;
+        trade_deficit_value: number;
+      }
+    ];
+  }>(get_top_deficit_countries);
+  const topSurplusServices = useApi<{
+    rows: [{ service_label: string; trade_surplus_value: string }];
+  }>(get_top_surplus_services);
+  return (
+    <Page showNav={false} heading="Queries">
+      <Padding />
+      <x.div
+        display="flex"
+        flexDirection="column"
+        w="100%"
+        p="2rem"
+        className="card bg-grey rounded "
+      >
+        <x.h4 margin={0} py="1rem">
+          Top 10 time slots (year and month) with the highest trade value (i.e.
+          import value + export value)
+        </x.h4>
+        <Padding />
+        <x.div flex={1}>
+          <DataTable
+            headings={[
+              { key: "time_ref", label: "Time (Year + Month)" },
+              {
+                key: "trade_value",
+                label: "Trade Value (Import + Export value)",
+              },
+            ]}
+            data={topTimeSlots.result?.rows}
+            loadingData={topTimeSlots.loading}
+          />
+        </x.div>
+      </x.div>
+      <x.div
+        display="flex"
+        flexDirection="column"
+        w="100%"
+        p="2rem"
+        className="card bg-grey rounded "
+      >
+        <x.h4 margin={0} py="1rem">
+          Top 50 countries with the highest total trade deficit value (i.e.
+          import value - export value) of goods from 2014 to 2016 where status
+          is “F”
+        </x.h4>
+        <Padding />
+        <x.div flex={1}>
+          <DataTable
+            headings={[
+              { key: "country_label", label: "Country" },
+              {
+                key: "product_type",
+                label: "Product Type",
+              },
+              {
+                key: "trade_deficit_value",
+                label: "Trade Deficit (Import - Export value)",
+              },
+              {
+                key: "status",
+                label: "Status",
+              },
+            ]}
+            data={topDeficitCountries.result?.rows}
+            loadingData={topDeficitCountries.loading}
+          />
+        </x.div>
+      </x.div>
+      <x.div
+        display="flex"
+        flexDirection="column"
+        w="100%"
+        p="2rem"
+        className="card bg-grey rounded "
+      >
+        <x.h4 margin={0} py="1rem">
+          Top 30 services with the highest total trade surplus value (i.e.
+          export value - import value) in the top 10 time slots of Query Result
+          1 and the top 50 countries of Query Result 2
+        </x.h4>
+        <Padding />
+        <x.div flex={1}>
+          <DataTable
+            headings={[
+              { key: "service_label", label: "Service" },
+              {
+                key: "trade_surplus_value",
+                label: "Trade Surplus (Export - Import value)",
+              },
+            ]}
+            data={topSurplusServices.result?.rows}
+            loadingData={topSurplusServices.loading}
+          />
+        </x.div>
+      </x.div>
+    </Page>
+  );
+};
+
+export default BigQueriesPage;
+
+
+        
+#--- web/pages/index.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+import { Page } from "../components/Page";
+import { PostCard } from "../components/Post";
+import { usePosts } from "../components/usePosts";
+import { useUser } from "../components/useUser";
+import { PostForm } from "../components/PostForm";
+
+const App = () => {
+  const { user } = useUser();
+  const { state, createPost, fetchPosts } = usePosts();
+
+  return !user ? null : (
+    <Page heading="Forum">
+      <PostForm createPost={createPost} onSuccess={fetchPosts} />
+      <x.div h="2rem" />
+      <h3>Recent Posts</h3>
+      {state === "loading" ? (
+        <h5>Loading...</h5>
+      ) : state.posts.length === 0 ? (
+        <h5>Nothing has been posted yet!</h5>
+      ) : (
+        state.posts.map((post) => <PostCard key={post.id} post={post} />)
+      )}
+    </Page>
+  );
+};
+
+export default App;
+
+
+        
+#--- web/pages/login.tsx ---#
+import React from "react";
+import { Page } from "../components/Page";
+import { x } from "@xstyled/emotion";
+import { useUser } from "../components/useUser";
+import { useForm } from "react-hook-form";
+import { Field } from "../components/Field";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { Padding } from "../components/Padding";
+import Link from "next/link";
+const Login = () => {
+  const { user, login, redirectToHome } = useUser(false);
+  const { register, handleSubmit, formState } = useForm<{
+    id: string;
+    password: string;
+  }>();
+  const [formError, setFormError] = React.useState<string | null>(null);
+  return (
+    <Page showNav={false}>
+      <x.div
+        display="flex"
+        h="100vh"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+      >
+        <h3>Login</h3>
+        <x.div className="card rounded">
+          <form
+            onSubmit={handleSubmit(async (formValues) => {
+              setFormError(null);
+              const result = await login(formValues);
+              if ("error" in result) {
+                setFormError(result.error.message);
+              } else {
+                redirectToHome();
+              }
+            })}
+          >
+            <Field
+              label="ID"
+              placeholder="enter your id"
+              autoComplete="username"
+              {...register("id", { required: true })}
+            />
+            <Field
+              label="Password"
+              type="password"
+              placeholder="enter your password"
+              autoComplete="current-password"
+              {...register("password", { required: true })}
+            />
+            <x.input
+              w="96%"
+              paddingTop="1rem"
+              type="submit"
+              className="primary rounded"
+              name="login"
+              value="Login"
+            />
+            {formError ? (
+              <x.p className="tacenter small error">{formError}</x.p>
+            ) : null}
+          </form>
+          <Padding />
+          <hr />
+          <Link href="/register">
+            <x.button w="100%" className="btn">
+              Register
+            </x.button>
+          </Link>
+        </x.div>
+      </x.div>
+    </Page>
+  );
+};
+
+export default Login;
+
+
+        
+#--- web/pages/register.tsx ---#
+import { x } from "@xstyled/emotion";
+import { useRouter } from "next/router";
+import React from "react";
+import { useForm, useFormContext } from "react-hook-form";
+import { Field } from "../components/Field";
+import { errorResponse } from "../components/models";
+import { objectToFormData } from "../components/objectToFormData";
+import { Page } from "../components/Page";
+import { ErrorMessage } from "../components/ErrorMessage";
+export type FormModel = {
+  id: string;
+  user_name: string;
+  password: string;
+  confirm_password: string;
+  image: FileList;
+};
+const RegisterPage = () => {
+  const { register, handleSubmit, formState, getValues } = useForm<FormModel>();
+  const [formError, setFormError] = React.useState<string>();
+  const router = useRouter();
+  return (
+    <Page showNav={false}>
+      <x.div
+        h="100vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+      >
+        <h3>Register</h3>
+        <form
+          onSubmit={handleSubmit(async (values) => {
+            const formData = objectToFormData({
+              ...values,
+              image: values.image.item(0)!!,
+            });
+            const res = await fetch("/api/register", {
+              method: "POST",
+              body: formData,
+            });
+            if (!res.ok) {
+              const errorBody = errorResponse.create(await res.json());
+              setFormError(errorBody.error.message);
+            } else {
+              router.push("/login");
+            }
+          })}
+        >
+          <x.div
+            display="flex"
+            flexDirection="column"
+            className="card rounded bg-grey"
+          >
+            <Field
+              label="ID"
+              autoComplete="new-username"
+              required
+              {...register("id", { required: true })}
+            />
+            <ErrorMessage formState={formState} field="id" />
+            <Field
+              label="Name"
+              required
+              autoComplete="name"
+              {...register("user_name", { required: true })}
+            />
+            <ErrorMessage formState={formState} field="user_name" />
+            <Field
+              type="password"
+              label="Password"
+              autoComplete="new-password"
+              required
+              {...register("password", { required: true })}
+            />
+            <ErrorMessage formState={formState} field="password" />
+            <Field
+              type="password"
+              label="Confirm Password"
+              autoComplete="new-password"
+              required
+              {...register("confirm_password", {
+                required: true,
+                validate: (value) =>
+                  value !== getValues().password
+                    ? "Passwords must match"
+                    : true,
+              })}
+            />
+            <ErrorMessage formState={formState} field="confirm_password" />
+            <Field
+              label="Profile Image"
+              type="file"
+              accept=".jpg,.gif,.png,.jpeg"
+              required
+              {...register("image", {
+                required: true,
+                validate: (value) => {
+                  const first = value.item(0);
+                  return !!first && first.size > 0;
+                },
+              })}
+            />
+
+            <ErrorMessage formState={formState} field="image" />
+            <x.input
+              type="submit"
+              value={formState.isSubmitting ? "Loading..." : "Register"}
+              w="100%"
+              className="btn primary rounded white"
+            />
+            {formError && (
+              <x.span py="1rem" className="error tacenter">
+                {formError}
+              </x.span>
+            )}
+          </x.div>
+        </form>
+      </x.div>
+    </Page>
+  );
+};
+
+export default RegisterPage;
+
+
+        
+#--- web/pages/user.tsx ---#
+import { x } from "@xstyled/emotion";
+import { useRouter } from "next/router";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { Field } from "../components/Field";
+import { errorResponse } from "../components/models";
+import { Padding } from "../components/Padding";
+import { Page } from "../components/Page";
+import { PostCard } from "../components/Post";
+import { PostForm } from "../components/PostForm";
+import { usePosts } from "../components/usePosts";
+import { useUser } from "../components/useUser";
+
+function ChangePasswordForm() {
+  const { register, formState, handleSubmit } = useForm<{
+    old_password: string;
+    new_password: string;
+  }>();
+  const { endSession } = useUser();
+  const [error, setError] = React.useState<string>();
+  return (
+    <x.form
+      onSubmit={handleSubmit((values) => {
+        fetch("/api/change_password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        }).then(async (res) => {
+          if (!res.ok) {
+            setError(errorResponse.create(await res.json()).error.message);
+          } else {
+            endSession();
+          }
+        });
+      })}
+    >
+      <div style={{ visibility: "hidden", height: 0, width: 0 }}>
+        <Field label="Username" autoComplete="username" />
+      </div>
+
+      <Field
+        label="Old password"
+        disabled={formState.isSubmitting}
+        className="input rounded"
+        type="password"
+        autoComplete="password"
+        required
+        {...register("old_password")}
+      />
+      <Field
+        label="New password"
+        disabled={formState.isSubmitting}
+        className="input rounded"
+        type="password"
+        autoComplete="new-password"
+        required
+        {...register("new_password")}
+      />
+      <x.div textAlign="end">
+        <x.input
+          type="submit"
+          value={formState.isSubmitting ? "Loading..." : "Change"}
+        />
+        <br />
+        {error && (
+          <x.span w="100%" textAlign="center" className="error">
+            {error}
+          </x.span>
+        )}
+      </x.div>
+    </x.form>
+  );
+}
+
+const UserPage = () => {
+  const router = useRouter();
+  const { user } = useUser();
+  const { state, editPost, fetchPosts } = usePosts("user");
+  const [editingPosts, setEditingPosts] = React.useState<
+    Record<string, undefined | boolean>
+  >({});
+  if (!user) return null;
+  return (
+    <Page heading="Profile">
+      <h3>ID</h3>
+      {user.id}
+      <x.div h="3rem" />
+      <h3>Name</h3>
+      {user.user_name}
+      <x.div h="3rem" />
+      <h3>Profile Image</h3>
+      <x.img
+        src={user.image}
+        alt="profile image"
+        h="5rem"
+        w="5rem"
+        objectFit="contain"
+      />
+      <Padding size={3} />
+      <h3>Change Password</h3>
+      <ChangePasswordForm />
+      <h3>Your Posts</h3>
+      {state === "loading"
+        ? "Loading..."
+        : !state.posts.length
+        ? "You haven't posted anything yet"
+        : state.posts.map((post) =>
+            editingPosts[post.id] ? (
+              <PostForm
+                key={post.id}
+                edit
+                initialData={post}
+                editPost={editPost}
+                onSuccess={() => {
+                  setEditingPosts((posts) => ({ ...posts, [post.id]: false }));
+                  router.push("/");
+                }}
+                onCancel={() =>
+                  setEditingPosts((posts) => ({ ...posts, [post.id]: false }))
+                }
+              />
+            ) : (
+              <PostCard
+                onEditClick={() =>
+                  setEditingPosts((posts) => ({ ...posts, [post.id]: true }))
+                }
+                post={post}
+                key={post.id}
+              />
+            )
+          )}
+    </Page>
+  );
+};
+
+export default UserPage;
+
+
+        
+#--- web/public/styles/color.min.css ---#
+:root{--gray:#ccc;--accent:#fa0;--warning:#ffd600;--error:#d50000;--success:#00c853;--info:#2962ff}.card{padding:1em;margin-top:1rem;background:var(--def);color:var(--fg)}@media(min-width:45em){.col{display:table-cell}.\31{width:5%}.\33{width:22%}.\34{width:30%}.\35{width:40%}.\32{width:15%}.row{display:table;border-spacing:1em 0}}.w-100,.row{width:100%}.w-50{width:50%}.white{color:#fff}.bg-white{background:#fff}.b-white{border-color:#fff}.gray{color:var(--gray)}.bg-gray{background:var(--gray)}.b-gray{border-color:var(--gray)}.black{color:#000}.bg-black{background:#000}.b-black{border-color:#000}.b-primary{border-color:var(--p)}.b-default{border-color:var(--b)}.accent{color:var(--accent)}.bg-accent{background:var(--accent)}.b-accent{border-color:var(--accent)}.warning{color:var(--warning)}.bg-warning{background:var(--warning)}.b-warning{border-color:var(--warning)}.error{color:var(--error)}.bg-error{background:var(--error)}.b-error{border-color:var(--error)}.success{color:var(--success)}.bg-success{background:var(--success)}.b-success{border-color:var(--success)}.info{color:var(--info)}.bg-info{background:var(--info)}.b-info{border-color:var(--info)}.inline{display:inline-block;margin:.5rem 0}.tacenter{text-align:center}.taleft{text-align:left}.taright{text-align:right}.pill{border-radius:2rem;white-space:nowrap}.rounded{border-radius:1rem}.mega{font-size:4rem}.large{font-size:2rem}.small{font-size:1.4rem}.nano{font-size:1.2rem}.normal{font-size:inherit}.vh-100{height:100vh;font-size:1.8rem}.vc{position:relative;top:40%;transform:perspective(.1rem) translateY(-45%)}.vc h1{margin:0}.p{padding:1rem}.p04{padding:.4rem}.ph{padding-left:1rem;padding-right:1rem}.ph04{padding-left:.4rem;padding-right:.4rem}.pv{padding:1rem;padding-bottom:1rem}.pv04{padding-top:.4rem;padding-bottom:.4rem}.m0{margin:0}.m{margin:1rem}.mh{margin-left:1rem;margin-right:1rem}.mv{margin-top:1rem;margin-bottom:1rem}.border{border-style:solid;border-width:.1rem}
+
+        
+#--- web/public/styles/dark.min.css ---#
+:root{font-size:62.5%;--fg:#aaa;--h:#efefef;--bg:#000;--b:#333;--p:#eee;--def:#121212}
+
+        
+#--- web/public/styles/light.min.css ---#
+:root{font-size:62.5%;--fg:#555;--h:#444;--bg:#fefefe;--b:#ccc;--p:#000;--def:#eee}
+
+        
+#--- web/public/styles/mono.min.css ---#
+*{box-sizing:border-box}.container{position:relative;width:100%;max-width:70rem;margin:0 auto;font-size:1.8rem}.content{width:calc(100% - 5rem);margin:auto;overflow:hidden}@media (min-width:420px){.container{width:90%;padding:0}}body{margin:0;line-height:1.6;font-family:monospace;color:var(--fg);background-color:var(--bg)}h1,h2,h3{line-height:1.2;font-family:sans-serif;color:var(--h)}a{color:var(--p)}a:hover,.btn:hover,input[type=submit]:hover{opacity:.8;cursor:pointer}code,samp,kbd{padding:.4rem;font-size:80%;color:var(--fg);background-color:var(--def);white-space:nowrap;border:solid .1rem var(--b)}kbd{border-bottom:.3rem solid var(--b);padding:.3rem .4em}input,textarea,select,pre>*,.btn{border:0;white-space:nowrap;font-style:normal;font-size:85%;font-family:monospace;display:inline;padding:1rem;margin:.5rem;max-width:100%;color:var(--fg);background-color:var(--def);text-decoration:none}textarea{height:15rem;white-space:pre-wrap}select{padding:.9rem}pre>*,table{display:block;white-space:pre}pre>samp{line-height:1.1}textarea,pre>*,table{margin:.5rem 0}pre>*,table,form{overflow:auto}table{white-space:normal;padding:0;font-size:90%}blockquote{white-space:normal;padding:1rem;margin:0;border-left:.4rem solid var(--b)}form{white-space:nowrap;display:block}th,td{padding:1rem 1.1rem;text-align:justify;border-bottom:.1rem solid var(--b)}.primary{background-color:var(--p);color:var(--def)}.default{background-color:var(--def);color:var(--fg)}hr{border:.1rem solid var(--b)}
+
+        
+#--- End Task 1 ---#
+
+
+#--- Begin Task 2 ---#
+from google.cloud import bigquery
+from pydantic import BaseModel
+
+
+class TimeSlotRow(BaseModel):
+    time_ref: str
+    trade_value: float
+
+
+class CountryDeficitRow(BaseModel):
+    country_label: str
+    product_type: str
+    trade_deficit_value: float
+    status: str
+
+
+class ServiceSurplusRow(BaseModel):
+    service_label: str
+    trade_surplus_value: float
+
+
+class BigQuery:
+    client = bigquery.Client()
+
+    top_ten_time_slots_query = """
+SELECT events.time_ref as time_ref, sum(events.value) as trade_value
+FROM `services_classification.trade_history` as events
+GROUP BY events.time_ref
+ORDER BY trade_value DESC
+LIMIT 10
+        """
+    top_deficit_countries_query = """
+WITH
+  trade_history AS (
+  SELECT
+    *,
+    SUBSTR(trade_history.time_ref, 0, 4) AS year,
+    CASE
+      WHEN trade_history.account = "Exports" THEN -trade_history.value
+    ELSE
+    trade_history.value
+  END
+    AS trade_value
+  FROM
+    `services_classification.trade_history` AS trade_history
+  WHERE
+    SUBSTR(trade_history.time_ref, 0, 4) IN ("2014",
+      "2015",
+      "2016") )
+SELECT
+  trade_history.country_code,
+  ANY_VALUE(countries.country_label) AS country_label,
+  ANY_VALUE(trade_history.product_type) AS product_type,
+  ANY_VALUE(trade_history.status) AS status,
+  SUM(trade_value) AS trade_deficit_value,
+FROM
+  trade_history
+INNER JOIN
+  `services_classification.country_classification` AS countries
+ON
+  trade_history.country_code=countries.country_code
+WHERE
+  trade_history.status = "F"
+  AND trade_history.product_type = "Goods"
+GROUP BY
+  trade_history.country_code
+ORDER BY
+  trade_deficit_value DESC
+LIMIT 50
+        """
+
+    top_surplus_services_query = f"""
+SELECT services.code, SUM(CASE WHEN trade_history.account = "Imports" THEN -trade_history.value ELSE trade_history.value END) as trade_surplus_value, ANY_VALUE(services.service_label) as service_label
+FROM `services_classification.trade_history` as trade_history
+INNER JOIN `services_classification.services_classification` as services ON trade_history.code=services.code
+INNER JOIN ({top_deficit_countries_query}) as top_deficit_countries ON top_deficit_countries.country_code=trade_history.country_code
+INNER JOIN ({top_ten_time_slots_query}) as top_time_slots ON top_time_slots.time_ref=trade_history.time_ref
+GROUP BY services.code
+ORDER BY trade_surplus_value DESC
+LIMIT 30
+        """
+
+    def top_time_slots(self):
+        return [
+            TimeSlotRow(**row)
+            for row in self.client.query(self.top_ten_time_slots_query)
+        ]
+
+    def top_deficit_countries(self):
+        return [
+            CountryDeficitRow(**row)
+            for row in self.client.query(self.top_deficit_countries_query)
+        ]
+
+    def top_surplus_services(self):
+        return [
+            ServiceSurplusRow(**row)
+            for row in self.client.query(self.top_surplus_services_query)
+        ]
+
+
+big_query = BigQuery()
+
+#--- End Task 2 ---#
+
+#--- Begin Task 3 ---#
+# Assignment 3 Project Proposal
+
+The working application idea for assignment 3 is a blogging, networking, and researching site for computer science researchers.
+Features include allowing users to create and publish articles, find and review papers on arxiv.org (usage of an external API),
+upload and convert (using Amazon Textract) research paper PDFs into a more web-friendly format, and subscribe to other users (or new articles on arxiv.org) to receive notifications of new publications.
+These desired features warrant the development of a full stack web application (built with S3 and CloudFront for the frontend, ECS for the backend, and DynamoDB for the database), using the arxiv.org API, Amazon Textract, a mechanism to parallelise and distribute long running conversion tasks (Amazon SQS and Lambda), and a mechanism to manage and send notifications (Amazon SNS).
+More features are also possible if more nuance and depth is required, such as PDF generation and downloading of articles (a long running task that could be queued on SQS and executed on a Lambda), data warehousing of application and user-interaction events (extracting analytics about the viewership of your blogs), or integrating multi-modal content such as audio and video within blogs.
+To describe the infrastructure in a more rigorous and sane way, AWS CloudFormation and CDK will be employed to configure and deploy the project's stack.
+
+#--- End Task 3 ---#          
+
+                  
+
+        
+#--- api/config.py ---#
+import os
+
+project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "neon-trilogy-307702")
+
+        
+#--- api/datastore.py ---#
+from api.schemas import Post, User
+from api.errors import (
+    UserIDAlreadyExists,
+    UserNameAlreadyExists,
+)
+from typing import Union, Literal
+
+from google.cloud import datastore
+from google.cloud.datastore.entity import Entity
+
+
+datastore_client = datastore.Client()
+
+
+class UsersDatastore:
+    def __init__(self, datastore_client: datastore.Client):
+        self.datastore_client = datastore_client
+
+    def get_users(
+        self, offset=None, limit=None, filters: list[(str, str)] = []
+    ) -> list[Entity]:
+        query = self.datastore_client.query(kind="user")
+        for filter in filters:
+            query = query.add_filter(filter[0], "=", filter[1])
+
+        return list(query.fetch(limit=limit, offset=offset))
+
+    def get_user_by_id(self, id: str):
+        return self.datastore_client.get(
+            key=self.datastore_client.key("user", id)
+        )
+
+    def validate_user_uniqueness(self, id: str, user_name: str):
+        if self.get_user_by_id(id):
+            return UserIDAlreadyExists()
+
+        existing_users = self.get_users(
+            filters=[
+                ("user_name", user_name),
+            ]
+        )
+
+        if len(existing_users) > 0:
+            return UserNameAlreadyExists()
+
+        return None
+
+    def add_user(self, user: User):
+        uniqueness_error = self.validate_user_uniqueness(
+            id=user.id, user_name=user.user_name
+        )
+        if uniqueness_error:
+            return uniqueness_error
+
+        entity = datastore.Entity(key=datastore_client.key("user", user.id))
+
+        entity.update(**user.dict())
+        self.datastore_client.put(entity)
+        return True
+
+    def update_user(self, user: User):
+        found_user = self.get_user_by_id(user.id)
+        if found_user:
+            found_user.update(**user.dict())
+            self.datastore_client.put(found_user)
+            return True
+        return "User not found"
+
+    def validate_credentials(self, id: str, password: str):
+        found_users = self.get_users(
+            filters=[
+                ("__key__", self.datastore_client.key("user", id)),
+                ("password", password),
+            ]
+        )
+        if len(found_users) == 1:
+            return found_users[0]
+        else:
+            return False
+
+
+class PostsDatastore:
+    def __init__(self, datastore_client: datastore.Client) -> None:
+        self.datastore_client = datastore_client
+
+    def top_ten(self):
+        posts_query = self.datastore_client.query(kind="post")
+        posts_query.order = ["-updated_at"]
+        posts = list(posts_query.fetch(limit=10))
+
+        users = users_datastore.get_users()
+
+        return [
+            {
+                **post,
+                "user": next(
+                    (user for user in users if user["id"] == post["user_id"]),
+                    "",
+                ),
+            }
+            for post in posts
+        ]
+
+    def upsert(self, post: Post):
+        post_entity = datastore.Entity(
+            key=datastore_client.key("post", post.id)
+        )
+        post_entity.update(post)
+        self.datastore_client.put(post_entity)
+        return True
+
+    def get_post_by_id(self, post_id: str):
+        return self.datastore_client.get(
+            key=self.datastore_client.key("post", post_id)
+        )
+
+    def user_posts(self, user_id: str):
+        posts_query = self.datastore_client.query(kind="post")
+        posts_query.order = ["-updated_at"]
+        posts_query.add_filter("user_id", "=", user_id)
+        posts = list(posts_query.fetch())
+
+        user = users_datastore.get_user_by_id(user_id)
+
+        return [{**post, "user": user} for post in posts]
+
+
+users_datastore = UsersDatastore(datastore_client=datastore_client)
+posts_datastore = PostsDatastore(datastore_client=datastore_client)
+
+        
+#--- api/errors.py ---#
+from typing import Any
+from flask import json
+
+
+class ApplicationError(Exception):
+    status_code = 500
+    message = "Internal Error"
+    details: Any = None
+
+    def with_details(self, data: object):
+        self.details = data
+        return self
+
+    def with_message(self, message: str):
+        self.message = message
+        return self
+
+    def to_flask_response(self):
+        response = json.jsonify(
+            {
+                "error": {
+                    "name": self.__class__.__name__,
+                    "message": self.message,
+                    "details": self.details,
+                }
+            }
+        )
+        response.status_code = self.status_code
+        return response
+
+
+class InvalidRequest(ApplicationError):
+    status_code = 400
+    message = "Invalid request"
+
+
+# Auth errors
+class InvalidCredentials(ApplicationError):
+    status_code = 400
+    message = "The ID or password was incorrect"
+
+
+class Unauthenticated(ApplicationError):
+    status_code = 401
+    message = "A valid authentication token is required"
+
+
+class ExpiredAuthToken(ApplicationError):
+    status_code = 401
+    message = "Expired authentication token"
+
+
+# Validation errors
+class InvalidLoginForm(ApplicationError):
+    status_code = 400
+    message = "The ID or password is invalid"
+
+
+class InvalidRegistrationForm(ApplicationError):
+    status_code = 400
+    message = "Invalid registration form data"
+
+
+class InvalidPostCreationForm(ApplicationError):
+    status_code = 400
+    message = "Invalid post creation data"
+
+
+# Logic errors
+class UserIDAlreadyExists(ApplicationError):
+    status_code = 400
+    message = "The ID already exists"
+
+
+class UserNameAlreadyExists(ApplicationError):
+    status_code = 400
+    message = "The username already exists"
+
+        
+#--- api/image_storage.py ---#
+from google.cloud import storage
+from uuid import uuid4
+from werkzeug.datastructures import FileStorage
+from api.config import project_id
+
+
+class ImageStorage:
+    client = storage.Client()
+    bucket_name = f"{project_id}.appspot.com"
+    bucket = client.get_bucket(bucket_name)
+
+    def upload_image(self, image: FileStorage):
+        name = f"{uuid4()}-{image.filename}"
+        blob = self.bucket.blob(name)
+        blob.upload_from_file(image.stream)
+        blob.make_public()
+        return blob.public_url
+
+
+image_storage = ImageStorage()
+
+
+        
+#--- api/index.yaml ---#
+indexes:
+  - kind: post
+    properties:
+      - name: user_id
+      - name: updated_at
+        direction: desc
+
+
+        
+#--- api/schemas.py ---#
+from typing import Optional
+from pydantic import BaseModel
+from datetime import datetime
+
+from werkzeug.datastructures import FileStorage
+
+
+class UserRegistrationForm(BaseModel):
+    id: str
+    user_name: str
+    password: str
+    image: FileStorage
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class ChangePasswordForm(BaseModel):
+    old_password: str
+    new_password: str
+
+
+class User(BaseModel):
+    id: str
+    user_name: str
+    password: str
+    image: str
+
+
+class PostCreateForm(BaseModel):
+    subject: str
+    message: str
+    image: FileStorage
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class PostEditForm(BaseModel):
+    id: str
+    subject: Optional[str]
+    message: Optional[str]
+    image: Optional[FileStorage]
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
+class Post(PostCreateForm):
+    id: str
+    user_id: str
+    image: str
+    created_at: datetime
+    updated_at: datetime
+
+
+class PostViewModel(Post):
+    user_image: str
+
+
+class LoginForm(BaseModel):
+    id: str
+    password: str
+
+
+        
+#--- api/seed.py ---#
+import os
+
+from .datastore import users_datastore
+from .schemas import User
+
+project_id = os.getenv("GCLOUD_PROJECT", "neon-trilogy-307702")
+
+base_image_url = (
+    f"https://storage.googleapis.com/{project_id}.appspot.com/Numbers/"
+)
+ints = list("01234567890123456789")
+
+users = [
+    {
+        "id": f"s3429288{index}",
+        "user_name": f"Daniel Manning{index}",
+        "password": "".join(ints[index : index + 6]),
+        "image": f"{base_image_url}{index}.png",
+    }
+    for index in range(0, 10)
+]
+
+for user in users:
+    result = users_datastore.add_user(
+        User(
+            id=user["id"],
+            user_name=user["user_name"],
+            password=user["password"],
+            image=user["image"],
+        ),
+    )
+    user_id = user["id"]
+    if result == True:
+        print(f"Created user {user_id}")
+    else:
+        print(f"Error creating {user_id}: {result.message}")
+
+
+os.system(
+    f"gcloud datastore indexes create {os.path.dirname(__file__)}/index.yaml"
+)
+
+
+        
+#--- web/.gitignore ---#
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory for instrumented libs generated by jscoverage/JSCover
+lib-cov
+
+# Coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Bower dependency directory (https://bower.io/)
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Snowpack dependency directory (https://snowpack.dev/)
+web_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+# Comment in the public line in if your project uses Gatsby and not Next.js
+# https://nextjs.org/blog/next-9-1#public-directory-support
+# public
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+
+        
+#--- web/next-env.d.ts ---#
+/// <reference types="next" />
+/// <reference types="next/types/global" />
+
+
+        
+#--- web/next.config.js ---#
+module.exports = {
+  rewrites() {
+    return {
+      fallback: [
+        {
+          source: "/:path*",
+          destination: "http://localhost:8080/:path*",
+        },
+      ],
+    };
+  },
+};
+
+
+        
+#--- web/package.json ---#
+{
+  "name": "web",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build && next export"
+  },
+  "dependencies": {
+    "@emotion/core": "^11.0.0",
+    "@emotion/react": "^11.1.5",
+    "@emotion/styled": "^11.1.5",
+    "@rest-hooks/rest": "^2.0.4",
+    "@types/date-fns": "^2.6.0",
+    "@types/use-persisted-state": "^0.3.0",
+    "@xstyled/emotion": "^2.4.1",
+    "@xstyled/util": "^2.2.3",
+    "date-fns": "^2.19.0",
+    "next": "^10.1.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-hook-form": "^7.0.0",
+    "rest-hooks": "^5.0.16",
+    "superstruct": "^0.15.1",
+    "typescript": "^4.2.3",
+    "use-persisted-state": "^0.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.37",
+    "@types/react": "^17",
+    "@types/react-dom": "^17"
+  }
+}
+
+
+        
+#--- web/styles.css ---#
+@import "./public/styles/mono.min.css";
+@import "./public/styles/color.min.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.nav a {
+  padding: 0.5rem;
+}
+
+
+        
+#--- web/tsconfig.json ---#
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
+
+
+        
+#--- web/components/ErrorMessage.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+import { FormState } from "react-hook-form";
+import { FormModel } from "../pages/register";
+
+export const ErrorMessage = ({
+  formState,
+  field,
+}: {
+  formState: FormState<FormModel>;
+  field: keyof FormModel;
+}) => {
+  const fieldErrors = formState.errors[field];
+  return (
+    (fieldErrors?.message && formState.touchedFields[field] && (
+      <x.span className="taright small error" pb="1rem">
+        {fieldErrors.message}
+      </x.span>
+    )) ||
+    null
+  );
+};
+
+
+        
+#--- web/components/Field.tsx ---#
+import React from "react";
+import { x } from "@xstyled/emotion";
+
+export const Field = React.forwardRef(
+  (
+    { label, ...props }: { label: string } & JSX.IntrinsicElements["input"],
+    ref: React.ForwardedRef<HTMLInputElement>
+  ) => (
+    <div>
+      <x.label display="flex" alignItems="center">
+        <x.span flex={1}>{label}</x.span>
+        <input className="mh input border" {...props} ref={ref} />
+      </x.label>
+    </div>
+  )
+);
+
+
+        
+#--- web/components/Nav.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+import { useUser } from "./useUser";
+import Link from "next/link";
+import { Padding } from "./Padding";
+import { UserAvatar } from "./UserAvatar";
+
+export function Nav() {
+  const { user, endSession } = useUser(false);
+
+  return user ? (
+    <x.nav
+      fontSize="1.8rem"
+      display="flex"
+      h="10rem"
+      w="100%"
+      alignItems="center"
+      px="2rem"
+    >
+      <x.h4 whiteSpace="nowrap" flexShrink={0} className="large">
+        <Link href="/">
+          <a>The Turing Network </a>
+        </Link>
+      </x.h4>
+      <x.div flex={1} />
+      <x.div display="flex" alignItems="center">
+        <x.div textAlign="end">
+          <Link href="/user">
+            <a className="normal">{user.user_name}</a>
+          </Link>
+          <br />
+          <Link href="/login">
+            <a className="small" onClick={endSession}>
+              Logout
+            </a>
+          </Link>
+        </x.div>
+        <Padding />
+        <UserAvatar src={user.image} size="medium" />
+      </x.div>
+    </x.nav>
+  ) : null;
+}
+
+
+        
+#--- web/components/Padding.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+export const Padding = ({ size = 1 }: { size?: number }) => (
+  <x.div w={`${size}rem`} h={`${size}rem`} flexShrink={0} />
+);
+
+
+        
+#--- web/components/Page.tsx ---#
+import Link from "next/link";
+import React from "react";
+import { Nav } from "./Nav";
+
+export const Page = ({
+  showNav = true,
+  showHeading = true,
+  heading,
+  ...props
+}: {
+  heading?: React.ReactNode;
+  showNav?: boolean;
+  showHeading?: boolean;
+  children: React.ReactNode;
+}) => {
+  return (
+    <>
+      {showNav ? <Nav /> : null}
+      <div className="container">
+        <div className="content">
+          {showHeading && (
+            <header>
+              <h1>{heading}</h1>
+            </header>
+          )}
+          {props.children}
+        </div>
+      </div>
+    </>
+  );
+};
+
+
+        
+#--- web/components/Post.tsx ---#
+import { x } from "@xstyled/emotion";
+import { format, fromUnixTime } from "date-fns";
+import React from "react";
+import { Post } from "./models";
+import { UserAvatar } from "./UserAvatar";
+
+export function PostCard({
+  post,
+  onEditClick,
+}: {
+  onEditClick?: () => void;
+  post: typeof Post.TYPE;
+}) {
+  const date = format(fromUnixTime(post.updated_at), "PPPppp");
+  return (
+    <div className="card bg-grey rounded mv">
+      <x.div display="flex" alignItems="center">
+        <x.h4 margin={0}>{post.subject}</x.h4>
+
+        <x.span flex={1} />
+        <x.div display="flex" alignItems="center">
+          <x.span className="nano">{post.user.user_name}</x.span>
+          <x.span w="1rem" />
+          <UserAvatar src={post.user.image} />
+        </x.div>
+      </x.div>
+      <x.div className="nano">{date}</x.div>
+
+      <div style={{ width: "100%", textAlign: "center", padding: "1rem" }}>
+        <img
+          src={post.image}
+          alt={post.subject}
+          style={{
+            minHeight: "12rem",
+            objectFit: "contain",
+            maxHeight: "20rem",
+            textAlign: "center",
+          }}
+        />
+      </div>
+      <blockquote
+        className="small"
+        style={{
+          whiteSpace: "pre-line",
+          maxHeight: "30rem",
+          overflow: "auto",
+        }}
+      >
+        {post.message}
+      </blockquote>
+      {onEditClick && (
+        <x.button w="100%" className="btn small" onClick={onEditClick}>
+          Edit
+        </x.button>
+      )}
+    </div>
+  );
+}
+
+
+        
+#--- web/components/PostForm.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+import { useForm, useFormContext } from "react-hook-form";
+
+export function PostForm({
+  onSuccess,
+  initialData,
+  onCancel,
+  ...props
+}: {
+  initialData?: {
+    id?: string;
+    subject: string;
+    message: string;
+    image: string;
+  };
+  onCancel?: () => void;
+  onSuccess?: () => void;
+} & (
+  | {
+      edit?: false;
+      createPost: (post: {
+        subject: string;
+        message: string;
+        image: File;
+      }) => Promise<any>;
+    }
+  | {
+      edit: true;
+      editPost: (post: {
+        id: string;
+        subject?: string;
+        message?: string;
+        image?: File;
+      }) => Promise<unknown>;
+    }
+)) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState,
+    setValue,
+    getValues,
+  } = useForm<{
+    id: string;
+    message: string;
+    subject: string;
+    image: File;
+  }>({ defaultValues: initialData });
+  const values = getValues();
+
+  const [localImage, setLocalImage] = React.useState<File>();
+  return (
+    <form
+      onSubmit={handleSubmit(async (values) => {
+        if (props.edit) {
+          await props.editPost(values);
+        } else {
+          await props.createPost(values);
+        }
+
+        reset();
+        setLocalImage(undefined);
+        onSuccess && onSuccess();
+      })}
+    >
+      <div className="p">
+        <input
+          disabled={formState.isSubmitting}
+          aria-label="subject"
+          className="input pill border b-black"
+          placeholder="Subject"
+          required
+          maxLength={120}
+          {...register("subject", {
+            required: true,
+            maxLength: 120,
+            setValueAs: (v) => v.trim(),
+          })}
+        />
+        <br />
+        <textarea
+          disabled={formState.isSubmitting}
+          aria-label="message"
+          placeholder="Write a compelling message"
+          className="pill input border b-black"
+          required
+          maxLength={500}
+          style={{ resize: "none", width: "100%", minHeight: "10rem" }}
+          {...register("message", {
+            required: true,
+            maxLength: 500,
+            setValueAs: (v) => v.trim(),
+          })}
+        />
+        <br />
+        {(values.image || localImage) && (
+          <x.img
+            maxHeight="20rem"
+            w="100%"
+            objectFit="contain"
+            src={
+              typeof values.image === "string"
+                ? values.image
+                : URL.createObjectURL(localImage)
+            }
+          />
+        )}
+        <br />
+        <label>
+          Image
+          <input
+            disabled={formState.isSubmitting}
+            type="file"
+            className="pill p"
+            accept=".png,.gif,.jpg,.jpeg"
+            multiple={false}
+            onChange={(e) => {
+              const first = e.currentTarget.files?.item(0);
+              if (first) {
+                setValue("image", first);
+                setLocalImage(first);
+              }
+            }}
+            required={!props.edit}
+          />
+        </label>
+
+        <x.div h="1rem" />
+        <x.div display="flex">
+          {onCancel && (
+            <x.button
+              disabled={formState.isSubmitting}
+              flex={1}
+              className="btn pill "
+              onClick={onCancel}
+            >
+              Cancel
+            </x.button>
+          )}
+          <x.input
+            disabled={formState.isSubmitting}
+            flex={1}
+            className="btn primary pill white"
+            type="submit"
+            value={
+              formState.isSubmitting
+                ? "Posting..."
+                : props.edit
+                ? "Update"
+                : "Post"
+            }
+          />
+        </x.div>
+      </div>
+    </form>
+  );
+}
+
+
+        
+#--- web/components/UserAvatar.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+export function UserAvatar({
+  src,
+  size = "small",
+}: {
+  src: string;
+  size?: "small" | "medium";
+}) {
+  const radius = size === "small" ? "3rem" : "6rem";
+  return (
+    <x.img
+      borderRadius="50%"
+      src={src}
+      objectFit="cover"
+      h={radius}
+      w={radius}
+      alt="user profile image"
+      boxShadow="2px 1px 8px #ccc "
+    />
+  );
+}
+
+
+        
+#--- web/components/models.tsx ---#
+import { type, string, number, optional, unknown, array } from "superstruct";
+
+export const userRecord = type({
+  id: string(),
+  user_name: string(),
+  image: string(),
+  authExpireDate: number(),
+});
+
+export const errorResponse = type({
+  error: type({
+    detail: optional(unknown()),
+    message: string(),
+    name: string(),
+  }),
+});
+
+export const Post = type({
+  id: string(),
+  subject: string(),
+  message: string(),
+  image: string(),
+  user_id: string(),
+  created_at: number(),
+  updated_at: number(),
+  user: type({
+    image: string(),
+    id: string(),
+    user_name: string(),
+  }),
+});
+
+export const Posts = type({
+  posts: array(Post),
+});
+
+
+        
+#--- web/components/objectToFormData.ts ---#
+export function objectToFormData(obj: Record<string, string | File>) {
+  const formData = new FormData();
+  Object.entries(obj).forEach(([key, value]) => {
+    formData.append(key, value);
+  });
+  return formData;
+}
+
+
+        
+#--- web/components/useApi.ts ---#
+import React from "react";
+
+export const useApi = <Result>(makeRequest: () => Promise<Result>) => {
+  const [result, setResult] = React.useState<Result>();
+  const [loading, setLoading] = React.useState(true);
+  const fetch = React.useCallback(() => {
+    setLoading(true);
+    makeRequest()
+      .then((result) => {
+        setResult(result);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [makeRequest]);
+  React.useEffect(() => {
+    fetch();
+  }, []);
+  return {
+    result,
+    loading,
+    fetch,
+  };
+};
+
+
+        
+#--- web/components/usePosts.ts ---#
+import React from "react";
+import { Posts } from "./models";
+import { objectToFormData } from "./objectToFormData";
+import { useUser } from "./useUser";
+
+export function usePosts(scope: "user" | "top10" = "top10") {
+  useUser();
+  const [posts, setPosts] = React.useState<typeof Posts.TYPE>({ posts: [] });
+  const [loading, setLoading] = React.useState(true);
+  const fetchPosts = React.useCallback(() => {
+    setLoading(true);
+    fetch(scope === "user" ? "/api/my_posts" : "/api/posts")
+      .then(async (res) => {
+        if (!res.ok) {
+          return [];
+        }
+        setPosts(Posts.create(await res.json()));
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [scope]);
+  React.useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const createPost = React.useCallback(
+    async (post: { subject: string; message: string; image: File }) => {
+      const res = await fetch("/api/posts", {
+        method: "POST",
+        body: objectToFormData(post),
+      });
+      if (res.ok) {
+        return res.json();
+      } else {
+        return {
+          error: await res.json(),
+        };
+      }
+    },
+    []
+  );
+
+  const editPost = React.useCallback(
+    async (post: {
+      id: string;
+      message?: string;
+      subject?: string;
+      image?: File | string;
+    }) => {
+      const res = await fetch(`/api/posts`, {
+        method: "PUT",
+        body: objectToFormData(post),
+      });
+      if (res.ok) {
+        return res.json();
+      } else {
+        return {
+          error: await res.json(),
+        };
+      }
+    },
+    []
+  );
+  return {
+    state: loading ? "loading" : posts,
+    createPost,
+    editPost,
+    fetchPosts,
+  } as const;
+}
+
+
+        
+#--- web/components/useUser.tsx ---#
+import createPersistedState from "use-persisted-state";
+import { parse, isBefore, fromUnixTime } from "date-fns";
+import React from "react";
+import { useRouter } from "next/router";
+import { errorResponse, userRecord } from "./models";
+
+export type Error = typeof errorResponse.TYPE;
+
+const useUserState = createPersistedState("user");
+
+export type User = typeof userRecord.TYPE;
+
+function isExpired(user: User) {
+  return isBefore(fromUnixTime(user.authExpireDate), new Date());
+}
+
+export function useUser(redirectIfUnauthenticated = true) {
+  const [userState, setUserState] = useUserState<null | User>(null);
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if ((!userState || isExpired(userState)) && redirectIfUnauthenticated) {
+      router.push("/login");
+    }
+  }, [userState, redirectIfUnauthenticated]);
+
+  const login = React.useCallback(
+    async ({ id, password }: { id: string; password: string }) => {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, password }),
+      });
+      if (res.ok) {
+        const user = userRecord.create(await res.json());
+        setUserState(user);
+        return user;
+      } else {
+        return errorResponse.create(await res.json());
+      }
+    },
+    []
+  );
+  const redirectToHome = React.useCallback(() => {
+    router.push("/");
+  }, []);
+
+  const endSession = React.useCallback(() => {
+    setUserState(null);
+  }, []);
+  return {
+    user: userState,
+    redirectToHome,
+    login,
+    endSession,
+  };
+}
+
+
+        
+#--- web/pages/_app.tsx ---#
+import Head from "next/head";
+import React from "react";
+import "../styles.css";
+
+// This default export is required in a new `pages/_app.js` file.
+export default function MyApp<Props>({
+  Component,
+  pageProps,
+}: {
+  Component: React.ComponentType<Props>;
+  pageProps: Props;
+}) {
+  return (
+    <>
+      <Head>
+        <link rel="stylesheet" href="/styles/light.min.css" />
+        <title>The Turing Network</title>
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+      </Head>
+      <Component {...pageProps} />
+    </>
+  );
+}
+
+
+        
+#--- web/pages/big-queries.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+import { Padding } from "../components/Padding";
+import { Page } from "../components/Page";
+import { useApi } from "../components/useApi";
+
+const get_top_time_slots = () =>
+  fetch("/api/big-query/top_time_slots").then(async (res) =>
+    res.ok ? res.json() : { error: await res.json() }
+  );
+const get_top_deficit_countries = () =>
+  fetch("/api/big-query/top_deficit_countries").then(async (res) =>
+    res.ok ? res.json() : { error: await res.json() }
+  );
+const get_top_surplus_services = () =>
+  fetch("/api/big-query/top_surplus_services").then(async (res) =>
+    res.ok ? res.json() : { error: await res.json() }
+  );
+
+function DataTable<Key extends string, Row extends Record<Key, any>>(props: {
+  headings: { key: Key; label: string }[];
+  data?: Row[];
+  loadingData?: boolean;
+}) {
+  return (
+    <x.table h="40rem" w="100%" overflow="auto">
+      <thead>
+        <tr>
+          {props.headings.map((heading) => (
+            <th key={heading.key}>{heading.label}</th>
+          ))}
+        </tr>
+      </thead>
+
+      <tbody>
+        {props.loadingData
+          ? "Loading..."
+          : props.data && props.data.length
+          ? props.data.map((row, i) => (
+              <tr key={i}>
+                {props.headings.map((heading) => (
+                  <td key={heading.key}>{row[heading.key]}</td>
+                ))}
+              </tr>
+            ))
+          : "No rows!"}
+      </tbody>
+    </x.table>
+  );
+}
+const BigQueriesPage = () => {
+  const topTimeSlots = useApi<{
+    rows: [{ time_ref: string; trade_value: number }];
+  }>(get_top_time_slots);
+  const topDeficitCountries = useApi<{
+    rows: [
+      {
+        country_label: string;
+        product_type: string;
+        status: string;
+        trade_deficit_value: number;
+      }
+    ];
+  }>(get_top_deficit_countries);
+  const topSurplusServices = useApi<{
+    rows: [{ service_label: string; trade_surplus_value: string }];
+  }>(get_top_surplus_services);
+  return (
+    <Page showNav={false} heading="Queries">
+      <Padding />
+      <x.div
+        display="flex"
+        flexDirection="column"
+        w="100%"
+        p="2rem"
+        className="card bg-grey rounded "
+      >
+        <x.h4 margin={0} py="1rem">
+          Top 10 time slots (year and month) with the highest trade value (i.e.
+          import value + export value)
+        </x.h4>
+        <Padding />
+        <x.div flex={1}>
+          <DataTable
+            headings={[
+              { key: "time_ref", label: "Time (Year + Month)" },
+              {
+                key: "trade_value",
+                label: "Trade Value (Import + Export value)",
+              },
+            ]}
+            data={topTimeSlots.result?.rows}
+            loadingData={topTimeSlots.loading}
+          />
+        </x.div>
+      </x.div>
+      <x.div
+        display="flex"
+        flexDirection="column"
+        w="100%"
+        p="2rem"
+        className="card bg-grey rounded "
+      >
+        <x.h4 margin={0} py="1rem">
+          Top 50 countries with the highest total trade deficit value (i.e.
+          import value - export value) of goods from 2014 to 2016 where status
+          is “F”
+        </x.h4>
+        <Padding />
+        <x.div flex={1}>
+          <DataTable
+            headings={[
+              { key: "country_label", label: "Country" },
+              {
+                key: "product_type",
+                label: "Product Type",
+              },
+              {
+                key: "trade_deficit_value",
+                label: "Trade Deficit (Import - Export value)",
+              },
+              {
+                key: "status",
+                label: "Status",
+              },
+            ]}
+            data={topDeficitCountries.result?.rows}
+            loadingData={topDeficitCountries.loading}
+          />
+        </x.div>
+      </x.div>
+      <x.div
+        display="flex"
+        flexDirection="column"
+        w="100%"
+        p="2rem"
+        className="card bg-grey rounded "
+      >
+        <x.h4 margin={0} py="1rem">
+          Top 30 services with the highest total trade surplus value (i.e.
+          export value - import value) in the top 10 time slots of Query Result
+          1 and the top 50 countries of Query Result 2
+        </x.h4>
+        <Padding />
+        <x.div flex={1}>
+          <DataTable
+            headings={[
+              { key: "service_label", label: "Service" },
+              {
+                key: "trade_surplus_value",
+                label: "Trade Surplus (Export - Import value)",
+              },
+            ]}
+            data={topSurplusServices.result?.rows}
+            loadingData={topSurplusServices.loading}
+          />
+        </x.div>
+      </x.div>
+    </Page>
+  );
+};
+
+export default BigQueriesPage;
+
+
+        
+#--- web/pages/index.tsx ---#
+import { x } from "@xstyled/emotion";
+import React from "react";
+import { Page } from "../components/Page";
+import { PostCard } from "../components/Post";
+import { usePosts } from "../components/usePosts";
+import { useUser } from "../components/useUser";
+import { PostForm } from "../components/PostForm";
+
+const App = () => {
+  const { user } = useUser();
+  const { state, createPost, fetchPosts } = usePosts();
+
+  return !user ? null : (
+    <Page heading="Forum">
+      <PostForm createPost={createPost} onSuccess={fetchPosts} />
+      <x.div h="2rem" />
+      <h3>Recent Posts</h3>
+      {state === "loading" ? (
+        <h5>Loading...</h5>
+      ) : state.posts.length === 0 ? (
+        <h5>Nothing has been posted yet!</h5>
+      ) : (
+        state.posts.map((post) => <PostCard key={post.id} post={post} />)
+      )}
+    </Page>
+  );
+};
+
+export default App;
+
+
+        
+#--- web/pages/login.tsx ---#
+import React from "react";
+import { Page } from "../components/Page";
+import { x } from "@xstyled/emotion";
+import { useUser } from "../components/useUser";
+import { useForm } from "react-hook-form";
+import { Field } from "../components/Field";
+import { ErrorMessage } from "../components/ErrorMessage";
+import { Padding } from "../components/Padding";
+import Link from "next/link";
+const Login = () => {
+  const { user, login, redirectToHome } = useUser(false);
+  const { register, handleSubmit, formState } = useForm<{
+    id: string;
+    password: string;
+  }>();
+  const [formError, setFormError] = React.useState<string | null>(null);
+  return (
+    <Page showNav={false}>
+      <x.div
+        display="flex"
+        h="100vh"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+      >
+        <h3>Login</h3>
+        <x.div className="card rounded">
+          <form
+            onSubmit={handleSubmit(async (formValues) => {
+              setFormError(null);
+              const result = await login(formValues);
+              if ("error" in result) {
+                setFormError(result.error.message);
+              } else {
+                redirectToHome();
+              }
+            })}
+          >
+            <Field
+              label="ID"
+              placeholder="enter your id"
+              autoComplete="username"
+              {...register("id", { required: true })}
+            />
+            <Field
+              label="Password"
+              type="password"
+              placeholder="enter your password"
+              autoComplete="current-password"
+              {...register("password", { required: true })}
+            />
+            <x.input
+              w="96%"
+              paddingTop="1rem"
+              type="submit"
+              className="primary rounded"
+              name="login"
+              value="Login"
+            />
+            {formError ? (
+              <x.p className="tacenter small error">{formError}</x.p>
+            ) : null}
+          </form>
+          <Padding />
+          <hr />
+          <Link href="/register">
+            <x.button w="100%" className="btn">
+              Register
+            </x.button>
+          </Link>
+        </x.div>
+      </x.div>
+    </Page>
+  );
+};
+
+export default Login;
+
+
+        
+#--- web/pages/register.tsx ---#
+import { x } from "@xstyled/emotion";
+import { useRouter } from "next/router";
+import React from "react";
+import { useForm, useFormContext } from "react-hook-form";
+import { Field } from "../components/Field";
+import { errorResponse } from "../components/models";
+import { objectToFormData } from "../components/objectToFormData";
+import { Page } from "../components/Page";
+import { ErrorMessage } from "../components/ErrorMessage";
+export type FormModel = {
+  id: string;
+  user_name: string;
+  password: string;
+  confirm_password: string;
+  image: FileList;
+};
+const RegisterPage = () => {
+  const { register, handleSubmit, formState, getValues } = useForm<FormModel>();
+  const [formError, setFormError] = React.useState<string>();
+  const router = useRouter();
+  return (
+    <Page showNav={false}>
+      <x.div
+        h="100vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+      >
+        <h3>Register</h3>
+        <form
+          onSubmit={handleSubmit(async (values) => {
+            const formData = objectToFormData({
+              ...values,
+              image: values.image.item(0)!!,
+            });
+            const res = await fetch("/api/register", {
+              method: "POST",
+              body: formData,
+            });
+            if (!res.ok) {
+              const errorBody = errorResponse.create(await res.json());
+              setFormError(errorBody.error.message);
+            } else {
+              router.push("/login");
+            }
+          })}
+        >
+          <x.div
+            display="flex"
+            flexDirection="column"
+            className="card rounded bg-grey"
+          >
+            <Field
+              label="ID"
+              autoComplete="new-username"
+              required
+              {...register("id", { required: true })}
+            />
+            <ErrorMessage formState={formState} field="id" />
+            <Field
+              label="Name"
+              required
+              autoComplete="name"
+              {...register("user_name", { required: true })}
+            />
+            <ErrorMessage formState={formState} field="user_name" />
+            <Field
+              type="password"
+              label="Password"
+              autoComplete="new-password"
+              required
+              {...register("password", { required: true })}
+            />
+            <ErrorMessage formState={formState} field="password" />
+            <Field
+              type="password"
+              label="Confirm Password"
+              autoComplete="new-password"
+              required
+              {...register("confirm_password", {
+                required: true,
+                validate: (value) =>
+                  value !== getValues().password
+                    ? "Passwords must match"
+                    : true,
+              })}
+            />
+            <ErrorMessage formState={formState} field="confirm_password" />
+            <Field
+              label="Profile Image"
+              type="file"
+              accept=".jpg,.gif,.png,.jpeg"
+              required
+              {...register("image", {
+                required: true,
+                validate: (value) => {
+                  const first = value.item(0);
+                  return !!first && first.size > 0;
+                },
+              })}
+            />
+
+            <ErrorMessage formState={formState} field="image" />
+            <x.input
+              type="submit"
+              value={formState.isSubmitting ? "Loading..." : "Register"}
+              w="100%"
+              className="btn primary rounded white"
+            />
+            {formError && (
+              <x.span py="1rem" className="error tacenter">
+                {formError}
+              </x.span>
+            )}
+          </x.div>
+        </form>
+      </x.div>
+    </Page>
+  );
+};
+
+export default RegisterPage;
+
+
+        
+#--- web/pages/user.tsx ---#
+import { x } from "@xstyled/emotion";
+import { useRouter } from "next/router";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { Field } from "../components/Field";
+import { errorResponse } from "../components/models";
+import { Padding } from "../components/Padding";
+import { Page } from "../components/Page";
+import { PostCard } from "../components/Post";
+import { PostForm } from "../components/PostForm";
+import { usePosts } from "../components/usePosts";
+import { useUser } from "../components/useUser";
+
+function ChangePasswordForm() {
+  const { register, formState, handleSubmit } = useForm<{
+    old_password: string;
+    new_password: string;
+  }>();
+  const { endSession } = useUser();
+  const [error, setError] = React.useState<string>();
+  return (
+    <x.form
+      onSubmit={handleSubmit((values) => {
+        fetch("/api/change_password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(values),
+        }).then(async (res) => {
+          if (!res.ok) {
+            setError(errorResponse.create(await res.json()).error.message);
+          } else {
+            endSession();
+          }
+        });
+      })}
+    >
+      <div style={{ visibility: "hidden", height: 0, width: 0 }}>
+        <Field label="Username" autoComplete="username" />
+      </div>
+
+      <Field
+        label="Old password"
+        disabled={formState.isSubmitting}
+        className="input rounded"
+        type="password"
+        autoComplete="password"
+        required
+        {...register("old_password")}
+      />
+      <Field
+        label="New password"
+        disabled={formState.isSubmitting}
+        className="input rounded"
+        type="password"
+        autoComplete="new-password"
+        required
+        {...register("new_password")}
+      />
+      <x.div textAlign="end">
+        <x.input
+          type="submit"
+          value={formState.isSubmitting ? "Loading..." : "Change"}
+        />
+        <br />
+        {error && (
+          <x.span w="100%" textAlign="center" className="error">
+            {error}
+          </x.span>
+        )}
+      </x.div>
+    </x.form>
+  );
+}
+
+const UserPage = () => {
+  const router = useRouter();
+  const { user } = useUser();
+  const { state, editPost, fetchPosts } = usePosts("user");
+  const [editingPosts, setEditingPosts] = React.useState<
+    Record<string, undefined | boolean>
+  >({});
+  if (!user) return null;
+  return (
+    <Page heading="Profile">
+      <h3>ID</h3>
+      {user.id}
+      <x.div h="3rem" />
+      <h3>Name</h3>
+      {user.user_name}
+      <x.div h="3rem" />
+      <h3>Profile Image</h3>
+      <x.img
+        src={user.image}
+        alt="profile image"
+        h="5rem"
+        w="5rem"
+        objectFit="contain"
+      />
+      <Padding size={3} />
+      <h3>Change Password</h3>
+      <ChangePasswordForm />
+      <h3>Your Posts</h3>
+      {state === "loading"
+        ? "Loading..."
+        : !state.posts.length
+        ? "You haven't posted anything yet"
+        : state.posts.map((post) =>
+            editingPosts[post.id] ? (
+              <PostForm
+                key={post.id}
+                edit
+                initialData={post}
+                editPost={editPost}
+                onSuccess={() => {
+                  setEditingPosts((posts) => ({ ...posts, [post.id]: false }));
+                  router.push("/");
+                }}
+                onCancel={() =>
+                  setEditingPosts((posts) => ({ ...posts, [post.id]: false }))
+                }
+              />
+            ) : (
+              <PostCard
+                onEditClick={() =>
+                  setEditingPosts((posts) => ({ ...posts, [post.id]: true }))
+                }
+                post={post}
+                key={post.id}
+              />
+            )
+          )}
+    </Page>
+  );
+};
+
+export default UserPage;
+
+
+        
+#--- web/public/styles/color.min.css ---#
+:root{--gray:#ccc;--accent:#fa0;--warning:#ffd600;--error:#d50000;--success:#00c853;--info:#2962ff}.card{padding:1em;margin-top:1rem;background:var(--def);color:var(--fg)}@media(min-width:45em){.col{display:table-cell}.\31{width:5%}.\33{width:22%}.\34{width:30%}.\35{width:40%}.\32{width:15%}.row{display:table;border-spacing:1em 0}}.w-100,.row{width:100%}.w-50{width:50%}.white{color:#fff}.bg-white{background:#fff}.b-white{border-color:#fff}.gray{color:var(--gray)}.bg-gray{background:var(--gray)}.b-gray{border-color:var(--gray)}.black{color:#000}.bg-black{background:#000}.b-black{border-color:#000}.b-primary{border-color:var(--p)}.b-default{border-color:var(--b)}.accent{color:var(--accent)}.bg-accent{background:var(--accent)}.b-accent{border-color:var(--accent)}.warning{color:var(--warning)}.bg-warning{background:var(--warning)}.b-warning{border-color:var(--warning)}.error{color:var(--error)}.bg-error{background:var(--error)}.b-error{border-color:var(--error)}.success{color:var(--success)}.bg-success{background:var(--success)}.b-success{border-color:var(--success)}.info{color:var(--info)}.bg-info{background:var(--info)}.b-info{border-color:var(--info)}.inline{display:inline-block;margin:.5rem 0}.tacenter{text-align:center}.taleft{text-align:left}.taright{text-align:right}.pill{border-radius:2rem;white-space:nowrap}.rounded{border-radius:1rem}.mega{font-size:4rem}.large{font-size:2rem}.small{font-size:1.4rem}.nano{font-size:1.2rem}.normal{font-size:inherit}.vh-100{height:100vh;font-size:1.8rem}.vc{position:relative;top:40%;transform:perspective(.1rem) translateY(-45%)}.vc h1{margin:0}.p{padding:1rem}.p04{padding:.4rem}.ph{padding-left:1rem;padding-right:1rem}.ph04{padding-left:.4rem;padding-right:.4rem}.pv{padding:1rem;padding-bottom:1rem}.pv04{padding-top:.4rem;padding-bottom:.4rem}.m0{margin:0}.m{margin:1rem}.mh{margin-left:1rem;margin-right:1rem}.mv{margin-top:1rem;margin-bottom:1rem}.border{border-style:solid;border-width:.1rem}
+
+        
+#--- web/public/styles/dark.min.css ---#
+:root{font-size:62.5%;--fg:#aaa;--h:#efefef;--bg:#000;--b:#333;--p:#eee;--def:#121212}
+
+        
+#--- web/public/styles/light.min.css ---#
+:root{font-size:62.5%;--fg:#555;--h:#444;--bg:#fefefe;--b:#ccc;--p:#000;--def:#eee}
+
+        
+#--- web/public/styles/mono.min.css ---#
+*{box-sizing:border-box}.container{position:relative;width:100%;max-width:70rem;margin:0 auto;font-size:1.8rem}.content{width:calc(100% - 5rem);margin:auto;overflow:hidden}@media (min-width:420px){.container{width:90%;padding:0}}body{margin:0;line-height:1.6;font-family:monospace;color:var(--fg);background-color:var(--bg)}h1,h2,h3{line-height:1.2;font-family:sans-serif;color:var(--h)}a{color:var(--p)}a:hover,.btn:hover,input[type=submit]:hover{opacity:.8;cursor:pointer}code,samp,kbd{padding:.4rem;font-size:80%;color:var(--fg);background-color:var(--def);white-space:nowrap;border:solid .1rem var(--b)}kbd{border-bottom:.3rem solid var(--b);padding:.3rem .4em}input,textarea,select,pre>*,.btn{border:0;white-space:nowrap;font-style:normal;font-size:85%;font-family:monospace;display:inline;padding:1rem;margin:.5rem;max-width:100%;color:var(--fg);background-color:var(--def);text-decoration:none}textarea{height:15rem;white-space:pre-wrap}select{padding:.9rem}pre>*,table{display:block;white-space:pre}pre>samp{line-height:1.1}textarea,pre>*,table{margin:.5rem 0}pre>*,table,form{overflow:auto}table{white-space:normal;padding:0;font-size:90%}blockquote{white-space:normal;padding:1rem;margin:0;border-left:.4rem solid var(--b)}form{white-space:nowrap;display:block}th,td{padding:1rem 1.1rem;text-align:justify;border-bottom:.1rem solid var(--b)}.primary{background-color:var(--p);color:var(--def)}.default{background-color:var(--def);color:var(--fg)}hr{border:.1rem solid var(--b)}
+
+        
+#--- End Task 1 ---#
+
+
+#--- Begin Task 2 ---#
+from google.cloud import bigquery
+from pydantic import BaseModel
+
+
+class TimeSlotRow(BaseModel):
+    time_ref: str
+    trade_value: float
+
+
+class CountryDeficitRow(BaseModel):
+    country_label: str
+    product_type: str
+    trade_deficit_value: float
+    status: str
+
+
+class ServiceSurplusRow(BaseModel):
+    service_label: str
+    trade_surplus_value: float
+
+
+class BigQuery:
+    client = bigquery.Client()
+
+    top_ten_time_slots_query = """
+SELECT events.time_ref as time_ref, sum(events.value) as trade_value
+FROM `services_classification.trade_history` as events
+GROUP BY events.time_ref
+ORDER BY trade_value DESC
+LIMIT 10
+        """
+    top_deficit_countries_query = """
+WITH
+  trade_history AS (
+  SELECT
+    *,
+    SUBSTR(trade_history.time_ref, 0, 4) AS year,
+    CASE
+      WHEN trade_history.account = "Exports" THEN -trade_history.value
+    ELSE
+    trade_history.value
+  END
+    AS trade_value
+  FROM
+    `services_classification.trade_history` AS trade_history
+  WHERE
+    SUBSTR(trade_history.time_ref, 0, 4) IN ("2014",
+      "2015",
+      "2016") )
+SELECT
+  trade_history.country_code,
+  ANY_VALUE(countries.country_label) AS country_label,
+  ANY_VALUE(trade_history.product_type) AS product_type,
+  ANY_VALUE(trade_history.status) AS status,
+  SUM(trade_value) AS trade_deficit_value,
+FROM
+  trade_history
+INNER JOIN
+  `services_classification.country_classification` AS countries
+ON
+  trade_history.country_code=countries.country_code
+WHERE
+  trade_history.status = "F"
+  AND trade_history.product_type = "Goods"
+GROUP BY
+  trade_history.country_code
+ORDER BY
+  trade_deficit_value DESC
+LIMIT 50
+        """
+
+    top_surplus_services_query = f"""
+SELECT services.code, SUM(CASE WHEN trade_history.account = "Imports" THEN -trade_history.value ELSE trade_history.value END) as trade_surplus_value, ANY_VALUE(services.service_label) as service_label
+FROM `services_classification.trade_history` as trade_history
+INNER JOIN `services_classification.services_classification` as services ON trade_history.code=services.code
+INNER JOIN ({top_deficit_countries_query}) as top_deficit_countries ON top_deficit_countries.country_code=trade_history.country_code
+INNER JOIN ({top_ten_time_slots_query}) as top_time_slots ON top_time_slots.time_ref=trade_history.time_ref
+GROUP BY services.code
+ORDER BY trade_surplus_value DESC
+LIMIT 30
+        """
+
+    def top_time_slots(self):
+        return [
+            TimeSlotRow(**row)
+            for row in self.client.query(self.top_ten_time_slots_query)
+        ]
+
+    def top_deficit_countries(self):
+        return [
+            CountryDeficitRow(**row)
+            for row in self.client.query(self.top_deficit_countries_query)
+        ]
+
+    def top_surplus_services(self):
+        return [
+            ServiceSurplusRow(**row)
+            for row in self.client.query(self.top_surplus_services_query)
+        ]
+
+
+big_query = BigQuery()
+
+#--- End Task 2 ---#
+
+#--- Begin Task 3 ---#
+# Assignment 3 Project Proposal
+
+The working application idea for assignment 3 is a blogging, networking, and researching site for computer science researchers.
+Features include allowing users to create and publish articles, find and review papers on arxiv.org (usage of an external API),
+upload and convert (using Amazon Textract) research paper PDFs into a more web-friendly format, and subscribe to other users (or new articles on arxiv.org) to receive notifications of new publications.
+These desired features warrant the development of a full stack web application (built with S3 and CloudFront for the frontend, ECS for the backend, and DynamoDB for the database), using the arxiv.org API, Amazon Textract, a mechanism to parallelise and distribute long running conversion tasks (Amazon SQS and Lambda), and a mechanism to manage and send notifications (Amazon SNS).
+More features are also possible if more nuance and depth is required, such as PDF generation and downloading of articles (a long running task that could be queued on SQS and executed on a Lambda), data warehousing of application and user-interaction events (extracting analytics about the viewership of your blogs), or integrating multi-modal content such as audio and video within blogs.
+To describe the infrastructure in a more rigorous and sane way, AWS CloudFormation and CDK will be employed to configure and deploy the project's stack.
+
+#--- End Task 3 ---#          
+
+                  
 
         
 #--- api/config.py ---#

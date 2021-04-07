@@ -34,7 +34,15 @@ output_file.write(
 Name: Daniel Manning
 Student ID: s3429288
 Date: {datetime.date.today()}
-Repo: https://github.com/dmisdm/cloud-computing-assignment-1.git
+Repo: https://github.com/dmisdm/cloud-computing-assignment-1
+Tagged Submission: https://github.com/dmisdm/cloud-computing-assignment-1/tree/submition
+Deployed Site: https://neon-trilogy-307702.ts.r.appspot.com/
+Deployed BigQueries Page: https://neon-trilogy-307702.ts.r.appspot.com/big-queries
+
+Notes:
+If you like, you can view the code in the git repository using the tagged commit link above.
+The file is separated into the 3 sections, delimited by "#--- Begin Task X ---#" and "#--- End Task X ---#".
+
 
 
 #--- Begin Task 1 ---#
