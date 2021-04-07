@@ -1,4 +1,3 @@
-from threading import local
 from uuid import uuid4
 from api.errors import (
     ApplicationError,
@@ -10,7 +9,7 @@ from api.errors import (
     InvalidRequest,
     Unauthenticated,
 )
-from flask import Flask, jsonify, request, make_response, url_for, redirect, g
+from flask import Flask, jsonify, request, make_response, g
 from api.schemas import (
     ChangePasswordForm,
     LoginForm,
@@ -23,7 +22,7 @@ from api.schemas import (
 from api.bigquery import big_query
 from api.datastore import users_datastore, posts_datastore
 from api.image_storage import image_storage
-from jwt import DecodeError, encode, decode, ExpiredSignatureError
+from jwt import encode, decode, ExpiredSignatureError
 from datetime import timedelta, datetime
 from functools import wraps
 from pydantic import ValidationError
